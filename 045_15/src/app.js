@@ -2,12 +2,15 @@ import * as THREE from 'three'
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import fragment from './shader/fragment.glsl'
+import fragmentDeer from './shader/fragmentDeer.glsl'
 import vertex from './shader/vertexParticles.glsl'
+import vertexDeer from './shader/vertexDeer.glsl'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
+// import { Reflector } from 'three/examples//jsm/objects/Reflector.js'
 import { easeInOutQuart, easeOutExpo } from './utils/easing.utils'
-
+import { Reflector } from './app/Reflector'
 import './styles.scss'
 
 var colors = require('nice-color-palettes')
@@ -30,6 +33,10 @@ let scene = new THREE.Scene()
 let renderer = new THREE.WebGLRenderer({ alpha: true })
 let clock
 
+// scene size
+var WIDTH = window.innerWidth
+var HEIGHT = window.innerHeight
+
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(width, height)
 renderer.setClearColor(_.bgColor, 1)
@@ -39,9 +46,25 @@ app.appendChild(renderer.domElement)
 const camera = new THREE.PerspectiveCamera(70, width / height, 0.001, 1000)
 
 // Camera position
-camera.position.set(0, 3, 3)
-
+camera.position.set(0.5, 5, 4)
 const controls = new OrbitControls(camera, renderer.domElement)
+
+// Reflector / Mirror
+// *****************************************************
+
+var geometry = new THREE.CircleBufferGeometry(40, 64)
+var groundMirror = new Reflector(geometry, {
+	clipBias: 0.03,
+	textureWidth: WIDTH * window.devicePixelRatio,
+	textureHeight: HEIGHT * window.devicePixelRatio,
+	color: 0x889999,
+	transparent: true,
+})
+groundMirror.material.transparent = true
+groundMirror.material.uniforms.opacity.value = 0.1
+groundMirror.position.y = 2
+groundMirror.rotateX(-Math.PI / 2)
+scene.add(groundMirror)
 
 // Lights and Fog
 // ************************************************************
@@ -127,53 +150,50 @@ function loadObjects() {
 	let loaderGltf = new GLTFLoader(manager)
 	loaderGltf.load('gltf/scene.gltf', function (gltf) {
 		let model = gltf.scene
-		_.matDeer = new THREE.PointsMaterial({
-			size: 0.01,
-			flatShading: true,
-			map: _.sprite,
+		_.matDeer = new THREE.ShaderMaterial({
+			extensions: {
+				derivatives: '#extension GL_OES_standard_derivatives : enable',
+			},
+			// side: THREE.DoubleSide,
+			uniforms: {
+				u_time: { type: 'f', value: 0 },
+				u_resolution: { type: 'v4', value: new THREE.Vector4() },
+			},
+			vertexShader: vertexDeer,
+			fragmentShader: fragmentDeer,
 			transparent: true,
-			alphaTest: 0.5,
+			skinning: true,
 		})
 
-		/*
 		let deerSkinnedMesh =
 			model.children[0].children[0].children[0].children[0].children[0]
 				.children[0].children[0].children[2]
-		let deerSkeleton = deerSkinnedMesh.skeleton
 
-		let deerGeometry = deerSkinnedMesh.geometry
-		_.meshDeer = new THREE.Points(deerGeometry, _.matDeer)*/
+		deerSkinnedMesh.material = _.matDeer
 
-		// New material
-		// model.traverse((o) => {
-		// 	if (o.isMesh) o.material = _.matDeer
-		// })
 		let scale = 0.0075
 		model.scale.set(scale, scale, scale)
-		scene.add(model)
-		// SKELETON
-		// let skeleton = new THREE.SkeletonHelper(model)
-		// skeleton.visible = false
-		// scene.add(skeleton)
-
-		// ANIMATIONS MIXER
-		// _.mixer = new THREE.AnimationMixer(model.scene)
-		var animations = gltf.animations
-		_.mixer = new THREE.AnimationMixer(model)
-		let walkAction = _.mixer.clipAction(animations[20])
-
 		model.position.y = 2
 		model.position.x = 2
 		model.position.z = -1
+		scene.add(model)
 
-		walkAction.play()
+		// ANIMATIONS MIXER
+		var animations = gltf.animations
+		_.mixer = new THREE.AnimationMixer(model)
+		// _.mixer = new THREE.AnimationMixer(_.meshDeer)
+		_.eat1_Action = _.mixer.clipAction(animations[8])
+		_.iddle2_Action = _.mixer.clipAction(animations[20])
+		_.iddle3_Action = _.mixer.clipAction(animations[21])
+
+		_.eat1_Action.play()
 	})
 
 	// LOAD PLY File
 	let loader = new PLYLoader(manager)
+
 	// Tree 1
 	// ************************************
-
 	loader.load('ply/Arbre_Duo.ply', function (geometry) {
 		geometry.computeBoundingSphere()
 		_.geometry1 = geometry
@@ -284,6 +304,7 @@ function render() {
 	renderer.setClearColor(_.bgColor)
 	let speed = 0.05
 	_.material2.uniforms.u_time.value = time
+	_.matDeer.uniforms.u_time.value = time
 
 	// camera.position.x = Math.cos(time * speed) * 3
 	// camera.position.z = Math.sin(time * speed) * 3
@@ -320,9 +341,6 @@ function render() {
 	var mixerUpdateDelta = clock.getDelta()
 	// Update the animation mixer, the stats panel, and render this frame
 	if (_.mixer) _.mixer.update(mixerUpdateDelta)
-	// console.log(_.mixer)
-	// _.action1.play()
-	// console.log(mixerUpdateDelta)
 }
 
 // KEYS EVENTS
@@ -342,6 +360,15 @@ function onKeyDown(evt) {
 	if (evt.key === ' ') {
 		_.isUserInteracting = true
 		_.swirling = !_.swirling
+	}
+
+	// Deer AnimationMixer
+
+	if (evt.key === 'q') {
+		_.iddle2_Action.play()
+	}
+	if (evt.key === 's') {
+		_.iddle3_Action.play()
 	}
 }
 function onMouseMove(event) {}
