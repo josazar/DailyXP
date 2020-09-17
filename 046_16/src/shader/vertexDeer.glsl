@@ -4,6 +4,7 @@ uniform mat4 bindMatrix;
 uniform mat4 bindMatrixInverse;
 uniform sampler2D boneTexture;
 uniform int boneTextureSize;
+uniform float u_time;
 
 mat4 getBoneMatrix(const in float i){
   float j=i*4.;
@@ -41,8 +42,5 @@ void main(){
   skinned+=boneMatW*skinVertex*skinWeight.w;
   skinned=bindMatrixInverse*skinned;
   vec4 mvPosition=modelViewMatrix*skinned;
-  
-  // Deform
-  
   gl_Position=projectionMatrix*mvPosition;
 }

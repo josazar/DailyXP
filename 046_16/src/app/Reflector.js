@@ -226,6 +226,10 @@ Reflector.ReflectorShader = {
 		textureMatrix: {
 			value: null,
 		},
+		u_time: {
+			value: null,
+		},
+		u_resolution: { type: 'v4', value: new THREE.Vector4() },
 	},
 	vertexShader: vertexReflector,
 	fragmentShader: fragReflector,

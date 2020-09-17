@@ -8,7 +8,7 @@ import vertexDeer from './shader/vertexDeer.glsl'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
-// import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
+// import { Reflector } from 'three/examples//jsm/objects/Reflector.js'
 import { easeInOutQuart, easeOutExpo } from './utils/easing.utils'
 import { Reflector } from './app/Reflector'
 import './styles.scss'
@@ -25,6 +25,9 @@ const _ = {
 	swirlStep: 0,
 	gui: new dat.GUI(),
 	bgColor: 0xf010e,
+	//Actions
+	activeAction: null,
+	lastAction: null,
 }
 
 let time = 0
@@ -56,18 +59,18 @@ controls.enableZoom = false
 // *****************************************************
 
 var geometry = new THREE.CircleBufferGeometry(40, 64)
-var groundMirror = new Reflector(geometry, {
+_.groundMirror = new Reflector(geometry, {
 	clipBias: 0.03,
 	textureWidth: WIDTH * window.devicePixelRatio,
 	textureHeight: HEIGHT * window.devicePixelRatio,
 	color: 0x889999,
 	transparent: true,
 })
-groundMirror.material.transparent = true
-groundMirror.material.uniforms.opacity.value = 0.45
-groundMirror.position.y = 2
-groundMirror.rotateX(-Math.PI / 2)
-scene.add(groundMirror)
+_.groundMirror.material.transparent = true
+_.groundMirror.material.uniforms.opacity.value = 0.45
+_.groundMirror.position.y = 2
+_.groundMirror.rotateX(-Math.PI / 2)
+scene.add(_.groundMirror)
 
 // Lights and Fog
 // ************************************************************
@@ -179,19 +182,29 @@ function loadObjects() {
 		model.position.y = 2
 		model.position.x = 0.8
 		model.position.z = -1
-		model.rotateY(PI / 3.2)
+		// model.rotateY(PI / 3.2)
 		scene.add(model)
 
 		// ANIMATIONS MIXER
 		var animations = gltf.animations
 		_.mixer = new THREE.AnimationMixer(model)
-		_.mixer.timeScale = 0.3
-		// _.mixer = new THREE.AnimationMixer(_.meshDeer)
+		_.mixer.timeScale = 0.8
+		_.mixer.addEventListener('loop', (e) => {
+			mixerLoopEventListener(e)
+		})
+		// Settings Actions
 		_.eat1_Action = _.mixer.clipAction(animations[7])
 		_.iddle2_Action = _.mixer.clipAction(animations[20])
 		_.iddle3_Action = _.mixer.clipAction(animations[21])
+		_.walkForward_Action = _.mixer.clipAction(animations[52])
+		_.walkRight_Action = _.mixer.clipAction(animations[55])
 
-		_.eat1_Action.play()
+		// Options
+		// _.walkForward_Action.setLoop(THREE.LoopOnce)
+		_.walkRight_Action.setLoop(THREE.LoopOnce)
+
+		_.activeAction = _.iddle2_Action
+		_.iddle2_Action.play()
 	})
 
 	// LOAD PLY File
@@ -315,6 +328,7 @@ function render() {
 	let speed = 0.05
 	_.material2.uniforms.u_time.value = time
 	_.matDeer.uniforms.u_time.value = time
+	_.groundMirror.material.uniforms.u_time.value = time
 
 	// camera.position.x = Math.cos(time * speed) * 3
 	// camera.position.z = Math.sin(time * speed) * 3
@@ -375,12 +389,23 @@ function onKeyDown(evt) {
 	// Deer AnimationMixer
 
 	if (evt.key === 'q') {
-		_.iddle2_Action.play()
+		setAction(_.iddle2_Action)
 	}
 	if (evt.key === 's') {
-		_.iddle3_Action.play()
+		setAction(_.iddle3_Action)
+	}
+	if (evt.key === 'd') {
+		setAction(_.eat1_Action)
+	}
+	// ArrowUp / ArrowLeft /ArrowRight
+	if (evt.key === 'ArrowUp') {
+		setAction(_.walkForward_Action)
+	}
+	if (evt.key === 'ArrowRight') {
+		setAction(_.walkRight_Action)
 	}
 }
+
 function onMouseMove(event) {}
 function onKeyUp() {
 	_.isUserInteracting = false
@@ -393,4 +418,26 @@ function resize() {
 	renderer.setSize(width, height)
 	camera.aspect = width / height
 	camera.updateProjectionMatrix()
+}
+
+// setActions Animation
+// ***************************************
+const setAction = (toAction) => {
+	if (toAction !== _.activeAction) {
+		_.lastAction = _.activeAction
+		_.activeAction = toAction
+		//lastAction.stop()
+		_.lastAction.fadeOut(0.5)
+		_.activeAction.reset()
+		_.activeAction.fadeIn(0.5)
+		_.activeAction.play()
+	}
+}
+
+function mixerLoopEventListener(e) {
+	let model = e.action.getRoot()
+	if (e.action === _.walkForward_Action) {
+		console.log('Walk')
+		model.position.z += 0.76
+	}
 }

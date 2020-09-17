@@ -42,38 +42,21 @@ float random(in vec2 st){
     float lines(in vec2 pos,float b){
       float scale=10.;
       pos*=scale;
-      return smoothstep(0.,
+      return smoothstep(.4,
         .5+b*.5,
         abs((sin(pos.x*3.1415)+b*2.))*.5);
       }
       
       void main(){
-        vec2 st=vUv;
-        st=gl_FragCoord.xy/resolution.xy;
-        st.x*=resolution.x/resolution.y;
-        st=st.yx*vec2(3.,3.);
-        
-        vec3 color=vec3(0.);
-        
-        float t=1.;
-        // Uncomment to animate
-        t=abs(1.-sin(u_time*.1))*5.;
-        // Comment and uncomment the following lines:
-        st+=noise(st*2.)*t;// Animate the coordinate space
-        color=vec3(1.)*smoothstep(.18,.2,noise(st));// Big black drops
-        color+=smoothstep(.15,.2,noise(st*10.));// Black splatter
-        color-=smoothstep(.35,.4,noise(st*10.));// Holes on splatter
-        
-        gl_FragColor=vec4(1.-color,1.);
-        
-        /*
+        vec2 pos=vUv;
         //  ZEBRE
         float pattern=pos.x;
         // Add noise
-        pos=rotate2d(noise(pos))*pos;
+        pos=rotate2d(noise(pos))*pos*10.;
         // Draw lines
         pattern=lines(pos,.5);
-        gl_FragColor=vec4(vec3(pattern),.5);*/
+        gl_FragColor=vec4(vec3(pattern),.6);
+        // gl_FragColor=vec4(vec3(1.),.85);
         
       }
       

@@ -56,8 +56,8 @@ void main(){
   
   // morph
   vec3 col=mix(vColor,vColorA,u_lerp);
-  col=mix(col,vec3(1,.6,1)*vPhytoncide,.45);
-  col*=1.5;
+  // col=mix(col,vec3(1,.8,1)*vPhytoncide,.45);
+  // col*=1.25;
   gl_FragColor=vec4(col,disc*.7*t);
   if(disc<.001)discard;
 }
