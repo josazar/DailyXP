@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useLoader, useFrame } from 'react-three-fiber'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
@@ -8,14 +8,23 @@ import { vertexShader } from './shader/vertex.js'
 // Models
 import arbre from './Models/Arbre_Liane_2.ply'
 import arbreDuo from './Models/Arbre_Duo.ply'
+import arbre_1 from './Models/tree_1.ply'
 
 export const PointsCloudModel = (props) => {
-	const ref = useRef()
+	// ******************************************************************************
+	// LOADER
+	// *************************************************************
 	const geometryA = useLoader(PLYLoader, arbre)
-	const geometryB = useLoader(PLYLoader, arbreDuo)
-	// avec <suspense></suspense> Il attend que les assets soient bien loadé
+	const geometryB = useLoader(PLYLoader, arbre_1)
+	// Thanks to SUSPENSE REACT WAIT FOR ALL THE ASSETS
 
-	let material = new THREE.ShaderMaterial({
+	// ******************************************************************************
+	// setup - vars whom don't re-render the component while changing
+	// ******************************************************************************
+	const ref = useRef()
+	let play = false
+	let rewind = false
+	const material = new THREE.ShaderMaterial({
 		uniforms: {
 			u_time: { type: 'f', value: 0 },
 			u_lerp: { type: 'f', value: 0 },
@@ -25,21 +34,12 @@ export const PointsCloudModel = (props) => {
 		fragmentShader: fragmentShader,
 		transparent: true,
 	})
-
-	let number = geometryA.attributes.color.count
+	const number = geometryA.attributes.color.count
 	let colorsB = new Float32Array(number * 3)
 	let positionB = new Float32Array(number * 3)
 	let args = new Float32Array(number * 4) // (pindex, speeds, sizes)
 
 	for (let i = 0; i < number; i++) {
-		// colors.set(
-		// 	[
-		// 		geometryA.attributes.color.array[i * 3],
-		// 		geometryA.attributes.color.array[i * 3 + 1],
-		// 		geometryA.attributes.color.array[i * 3 + 2],
-		// 	],
-		// 	i * 3
-		// )
 		colorsB.set(
 			[
 				geometryB.attributes.color.array[i * 3],
@@ -56,7 +56,6 @@ export const PointsCloudModel = (props) => {
 			],
 			i * 3
 		)
-
 		let phy = 0
 		if (i % 200 === 0) {
 			phy = 1
@@ -64,17 +63,41 @@ export const PointsCloudModel = (props) => {
 		// args = set(pIndex, Speeds, Sizes)
 		args.set([i, Math.random(), Math.random(), phy], i * 4)
 	}
-
-	// geometryA.setAttribute('color', new THREE.BufferAttribute(colors, 3))
 	geometryA.setAttribute('colorB', new THREE.BufferAttribute(colorsB, 3))
 	geometryA.setAttribute('positionB', new THREE.BufferAttribute(positionB, 3))
 	geometryA.setAttribute('args', new THREE.BufferAttribute(args, 4))
 
+	// ******************************************************************************
 	// RAF
+	// ******************************************************************************
 	useFrame(() => {
 		ref.current.material.uniforms.u_time.value += 0.05
+		// play
+		if (ref.current.material.uniforms.u_lerp.value < 1 && play)
+			ref.current.material.uniforms.u_lerp.value += 0.02
+		else play = false
+
+		// rewind
+		if (ref.current.material.uniforms.u_lerp.value > 0 && rewind)
+			ref.current.material.uniforms.u_lerp.value -= 0.02
+		else rewind = false
 	})
 
+	// ******************************************************************************
+	// KEYBOARD EVENT
+	// ******************************************************************************
+	window.addEventListener('keydown', (e) => {
+		if (e.key === 'a') {
+			play = true
+			rewind = false
+		}
+		if (e.key === 'z') {
+			rewind = true
+			play = false
+		}
+	})
+
+	// ******************************************************************************
 	//  COMPONENT
 	// ******************************************************************************
 	return (

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import { OrbitControls, Html } from 'drei'
 import { PointsCloudModel } from './Components/PointsCloudModel'
