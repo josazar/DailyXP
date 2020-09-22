@@ -2,22 +2,21 @@ import * as THREE from 'three'
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import fragment from './shader/fragment.glsl'
-import fragmentDeer from './shader/fragmentDeer.glsl'
 import vertex from './shader/vertexParticles.glsl'
-import vertexDeer from './shader/vertexDeer.glsl'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
-// import { Reflector } from 'three/examples//jsm/objects/Reflector.js'
 import { easeInOutQuart, easeOutExpo } from './utils/easing.utils'
-import { Reflector } from './app/Reflector'
+import { Reflector } from './Reflector/Reflector'
 import './styles.scss'
 import { PI, lerp } from './utils/math.utils'
+import Deer from './class/Deer'
+import Wave from './class/Wave'
+import { Vector3 } from 'three'
 
 var colors = require('nice-color-palettes')
 let random = colors[Math.floor(Math.random() * 100)]
 const _ = {
-	isUserInteracting: false,
 	playMorph: false,
 	rewindMorph: false,
 	step: 0,
@@ -25,39 +24,40 @@ const _ = {
 	swirlStep: 0,
 	gui: new dat.GUI(),
 	bgColor: 0xf010e,
-	//Actions
-	activeAction: null,
-	lastAction: null,
 }
+let keyControls = {
+	left: false,
+	right: false,
+	up: false,
+	down: false,
+}
+let waves = []
 
+let deer
 let time = 0
-let width = window.innerWidth
-let height = window.innerHeight
-let scene = new THREE.Scene()
-let renderer = new THREE.WebGLRenderer({ alpha: true })
 let clock
-
-// scene size
 var WIDTH = window.innerWidth
 var HEIGHT = window.innerHeight
+let scene = new THREE.Scene()
+let renderer = new THREE.WebGLRenderer({ alpha: true })
 
 renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setSize(width, height)
+renderer.setSize(WIDTH, HEIGHT)
 renderer.setClearColor(_.bgColor, 1)
 renderer.shadowMap.enabled = true
 const app = document.getElementById('app')
 app.appendChild(renderer.domElement)
-const camera = new THREE.PerspectiveCamera(70, width / height, 0.001, 1000)
+const camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 0.001, 1000)
 
 // Camera position
 camera.position.set(0.5, 3, 3.5)
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.maxPolarAngle = PI / 3.2
 controls.enableZoom = false
+controls.enableKeys = false
 
 // Reflector / Mirror
 // *****************************************************
-
 var geometry = new THREE.CircleBufferGeometry(40, 64)
 _.groundMirror = new Reflector(geometry, {
 	clipBias: 0.03,
@@ -65,16 +65,16 @@ _.groundMirror = new Reflector(geometry, {
 	textureHeight: HEIGHT * window.devicePixelRatio,
 	color: 0x889999,
 	transparent: true,
+	depthBuffer: true,
 })
 _.groundMirror.material.transparent = true
-_.groundMirror.material.uniforms.opacity.value = 0.45
+_.groundMirror.material.uniforms.opacity.value = 0.35
 _.groundMirror.position.y = 2
 _.groundMirror.rotateX(-Math.PI / 2)
 scene.add(_.groundMirror)
 
 // Lights and Fog
 // ************************************************************
-
 scene.fog = new THREE.Fog(0xa0a0a0, 10, 50)
 
 var hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444)
@@ -98,7 +98,6 @@ let colorsGui = _.gui.addFolder('Colors')
 colorsGui.add(_, 'swirling').name('Swirl !')
 colorsGui.addColor(_, 'bgColor').name('background')
 colorsGui.open()
-
 let controlsGui = _.gui.addFolder('Controls')
 controlsGui.add(_, 'step', 0, 1, 0.01).name('Morph Steps')
 controlsGui.open()
@@ -155,56 +154,7 @@ function loadObjects() {
 	// ************************************
 	let loaderGltf = new GLTFLoader(manager)
 	loaderGltf.load('gltf/scene.gltf', function (gltf) {
-		let model = gltf.scene
-		_.matDeer = new THREE.ShaderMaterial({
-			extensions: {
-				derivatives: '#extension GL_OES_standard_derivatives : enable',
-			},
-			// side: THREE.DoubleSide,
-			uniforms: {
-				u_time: { type: 'f', value: 0 },
-				u_resolution: { type: 'v4', value: new THREE.Vector4() },
-			},
-			vertexShader: vertexDeer,
-			fragmentShader: fragmentDeer,
-			transparent: true,
-			skinning: true,
-		})
-
-		let deerSkinnedMesh =
-			model.children[0].children[0].children[0].children[0].children[0]
-				.children[0].children[0].children[2]
-
-		deerSkinnedMesh.material = _.matDeer
-
-		let scale = 0.0075
-		model.scale.set(scale, scale, scale)
-		model.position.y = 2
-		model.position.x = 0.8
-		model.position.z = -1
-		// model.rotateY(PI / 3.2)
-		scene.add(model)
-
-		// ANIMATIONS MIXER
-		var animations = gltf.animations
-		_.mixer = new THREE.AnimationMixer(model)
-		_.mixer.timeScale = 0.8
-		_.mixer.addEventListener('loop', (e) => {
-			mixerLoopEventListener(e)
-		})
-		// Settings Actions
-		_.eat1_Action = _.mixer.clipAction(animations[7])
-		_.iddle2_Action = _.mixer.clipAction(animations[20])
-		_.iddle3_Action = _.mixer.clipAction(animations[21])
-		_.walkForward_Action = _.mixer.clipAction(animations[52])
-		_.walkRight_Action = _.mixer.clipAction(animations[55])
-
-		// Options
-		// _.walkForward_Action.setLoop(THREE.LoopOnce)
-		_.walkRight_Action.setLoop(THREE.LoopOnce)
-
-		_.activeAction = _.iddle2_Action
-		_.iddle2_Action.play()
+		deer = new Deer(gltf)
 	})
 
 	// LOAD PLY File
@@ -255,6 +205,10 @@ function addObjects() {
 	var helper = new THREE.GridHelper(16, 32)
 	helper.position.y = 2
 	// scene.add(helper)
+
+	// Deer
+	deer.init()
+	scene.add(deer.model)
 
 	let number = _.geometry2.attributes.color.count
 	let sizes = new Float32Array(number)
@@ -316,6 +270,11 @@ function addObjects() {
 	_.tree2Mesh = new THREE.Points(_.geometry2, _.material2)
 	scene.add(_.tree2Mesh)
 
+	// Wave water
+	let wave = new Wave(new Vector3(1, 2.001, 1))
+	scene.add(wave.container)
+	waves.push(wave)
+
 	clock = new THREE.Clock()
 	render()
 }
@@ -327,9 +286,13 @@ function render() {
 	renderer.setClearColor(_.bgColor)
 	let speed = 0.05
 	_.material2.uniforms.u_time.value = time
-	_.matDeer.uniforms.u_time.value = time
+	deer.material.uniforms.u_time.value = time
 	_.groundMirror.material.uniforms.u_time.value = time
 
+	for (let i = 0; i < waves.length; i++) {
+		const element = waves[i]
+		element.update()
+	}
 	// camera.position.x = Math.cos(time * speed) * 3
 	// camera.position.z = Math.sin(time * speed) * 3
 
@@ -358,86 +321,92 @@ function render() {
 	_.material2.uniforms.u_swirlStep.value = easeInOutQuart(_.swirlStep)
 	let target = new THREE.Vector3(0, 3, 0)
 	camera.lookAt(target)
-	requestAnimationFrame(render)
-	renderer.render(scene, camera)
 
 	// Mixer Animations
 	var mixerUpdateDelta = clock.getDelta()
 	// Update the animation mixer, the stats panel, and render this frame
-	if (_.mixer) _.mixer.update(mixerUpdateDelta)
+	if (deer.mixer) deer.mixer.update(mixerUpdateDelta)
+
+	requestAnimationFrame(render)
+	renderer.render(scene, camera)
 }
 
 // KEYS EVENTS
 // ****************************************************************
 function onKeyDown(evt) {
 	if (evt.key === 'a') {
-		_.isUserInteracting = true
 		_.rewindMorph = false
 		_.playMorph = true
 	}
 	if (evt.key === 'z') {
-		_.isUserInteracting = true
 		_.playMorph = false
 		_.rewindMorph = true
 	}
 
-	if (evt.key === ' ') {
-		_.isUserInteracting = true
+	if (evt.key === 'e') {
 		_.swirling = !_.swirling
 	}
 
 	// Deer AnimationMixer
-
 	if (evt.key === 'q') {
-		setAction(_.iddle2_Action)
+		deer.setAction(deer.actions.iddle2)
 	}
 	if (evt.key === 's') {
-		setAction(_.iddle3_Action)
+		deer.setAction(deer.actions.iddle3)
 	}
-	if (evt.key === 'd') {
-		setAction(_.eat1_Action)
+	if (evt.key === ' ') {
+		deer.setAction(deer.actions.eat1)
 	}
 	// ArrowUp / ArrowLeft /ArrowRight
 	if (evt.key === 'ArrowUp') {
-		setAction(_.walkForward_Action)
+		keyControls.up = true
+		deer.setAction(deer.actions.walkForward)
 	}
 	if (evt.key === 'ArrowRight') {
-		setAction(_.walkRight_Action)
+		keyControls.right = true
+		deer.setAction(deer.actions.walkRight)
+	}
+	if (evt.key === 'ArrowLeft') {
+		keyControls.left = true
+		deer.setAction(deer.actions.walkLeft)
+	}
+	if (evt.key === 'ArrowDown') {
+		keyControls.down = true
+		deer.setAction(deer.actions.walkBack)
+	}
+	if (evt.key === 'r') {
+		// Wave water
+		let wave = new Wave(
+			new Vector3(Math.random() * 4 - 2, 2, Math.random() * 2 + 1)
+		)
+		scene.add(wave.container)
+		waves.push(wave)
 	}
 }
 
 function onMouseMove(event) {}
-function onKeyUp() {
-	_.isUserInteracting = false
-	_.velocity = 0.01
+function onKeyUp(evt) {
+	// ArrowUp / ArrowLeft /ArrowRight
+	if (evt.key === 'ArrowUp') {
+		keyControls.up = false
+	}
+	if (evt.key === 'ArrowRight') {
+		keyControls.right = false
+	}
+	if (evt.key === 'ArrowLeft') {
+		keyControls.left = false
+	}
+	if (evt.key === 'ArrowDown') {
+		keyControls.down = false
+	}
 }
 
 function resize() {
-	width = window.innerWidth
-	height = window.innerHeight
-	renderer.setSize(width, height)
-	camera.aspect = width / height
+	WIDTH = window.innerWidth
+	HEIGHT = window.innerHeight
+	renderer.setSize(WIDTH, HEIGHT)
+	camera.aspect = WIDTH / HEIGHT
 	camera.updateProjectionMatrix()
 }
 
-// setActions Animation
-// ***************************************
-const setAction = (toAction) => {
-	if (toAction !== _.activeAction) {
-		_.lastAction = _.activeAction
-		_.activeAction = toAction
-		//lastAction.stop()
-		_.lastAction.fadeOut(0.5)
-		_.activeAction.reset()
-		_.activeAction.fadeIn(0.5)
-		_.activeAction.play()
-	}
-}
-
-function mixerLoopEventListener(e) {
-	let model = e.action.getRoot()
-	if (e.action === _.walkForward_Action) {
-		console.log('Walk')
-		model.position.z += 0.76
-	}
-}
+export { keyControls }

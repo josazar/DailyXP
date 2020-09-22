@@ -1,0 +1,18 @@
+body,
+html {
+	margin: 0;
+
+	height: 100%;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace;
+}
+
+canvas {
+	height: 100vh;
+	width: 100vw;
+
+	background-color: #272727;
+}
