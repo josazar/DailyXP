@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import * as THREE from 'three'
-import { useLoader, useFrame } from 'react-three-fiber'
+import { useLoader, useFrame, useThree } from 'react-three-fiber'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { fragmentShader } from './shader/fragment.js'
 import { vertexShader } from './shader/vertex.js'
@@ -14,8 +14,8 @@ export const PointsCloudModel = (props) => {
 	// ******************************************************************************
 	// LOADER
 	// *************************************************************
-	const geometryA = useLoader(PLYLoader, arbre)
-	const geometryB = useLoader(PLYLoader, arbre_1)
+	const geometryA = useLoader(PLYLoader, arbreDuo)
+	const geometryB = useLoader(PLYLoader, arbre)
 	// Thanks to SUSPENSE REACT WAIT FOR ALL THE ASSETS
 
 	// ******************************************************************************
