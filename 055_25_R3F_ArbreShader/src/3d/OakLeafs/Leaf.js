@@ -4,14 +4,14 @@ import { useFrame, useLoader } from 'react-three-fiber'
 import texture from './texture/oak_leaf.png'
 
 const colors = ['#A2FFB6', '#AAEEB5', '#EE786E', '#EE786E']
+const LeafsNumber = 12
 
 function LeafSystem(props) {
 	const ref = useRef()
-	let num = 32
 	const textureLeaf = useLoader(THREE.TextureLoader, texture)
 
 	let dist = 6
-	const coords = new Array(num)
+	const coords = new Array(LeafsNumber)
 		.fill()
 		.map((i) => [
 			Math.random() * dist - dist / 2,

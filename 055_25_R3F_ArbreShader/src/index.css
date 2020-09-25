@@ -22,6 +22,7 @@ canvas {
 .controller {
 	position: absolute;
 	top: 0px;
+	right: 0px;
 }
 
 .loader-txt {

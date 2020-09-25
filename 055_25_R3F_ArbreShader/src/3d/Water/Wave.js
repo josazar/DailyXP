@@ -51,7 +51,7 @@ export const Wave = (props) => {
 	return <primitive object={container} {...props} />
 }
 
-// export class Wave {
+// export class WaveClass {
 // 	constructor(vPosition) {
 // 		this.wavesMesh = []
 // 		this.timer = 0
@@ -60,7 +60,7 @@ export const Wave = (props) => {
 // 		this.nbWaves = 2
 // 		this.died = false
 // 		this.container = new THREE.Group()
-// 		this.container.position.set(vPosition.x, vPosition.y, vPosition.z)
+// 		//	this.container.position.set(vPosition[0], vPosition[1], vPosition[2])
 // 		this.container.rotation.x = PI / 2
 // 		// init first Ring
 // 		this.createRing()

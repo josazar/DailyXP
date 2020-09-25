@@ -8,6 +8,7 @@ import { ControlsPanel } from './UI/Controls'
 import { LeafSystem } from './3d/OakLeafs/Leaf'
 import { RainManager } from './3d/Rain.js'
 import { useStore } from './Store'
+import FPSStats from 'react-fps-stats'
 
 const CameraLookAt = () => {
 	const { camera } = useThree()
@@ -47,10 +48,15 @@ export default function App() {
 					enableKeys={false}
 					enablePan={false}
 					maxPolarAngle={PI / 2.2}
+					// enableDamping={false}
+					dampingFactor={0.3}
 				/>
 				<CameraLookAt />
 			</Canvas>
 			<ControlsPanel />
+			<div className="fps-counter">
+				<FPSStats />
+			</div>
 		</>
 	)
 }

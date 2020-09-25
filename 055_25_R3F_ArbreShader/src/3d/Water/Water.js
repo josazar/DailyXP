@@ -16,10 +16,8 @@ export const Water = (props) => {
 		depthBuffer: true,
 	})
 	water.material.transparent = true
-	water.material.uniforms.opacity.value = 0.25
+	water.material.uniforms.opacity.value = 0.35
 	water.rotateX(-Math.PI / 2)
-	// waterFake.current.rotateX(-Math.PI / 2)
-	console.log(waterFake)
 
 	useFrame(() => {
 		water.material.uniforms.u_time.value += 0.05
@@ -34,7 +32,7 @@ export const Water = (props) => {
 				name="waterFake"
 			>
 				<circleBufferGeometry args={[40, 32]} />
-				<meshBasicMaterial color={'#15192c'} />
+				<meshBasicMaterial color={'#2d2642'} />
 			</mesh>
 		</group>
 	)
