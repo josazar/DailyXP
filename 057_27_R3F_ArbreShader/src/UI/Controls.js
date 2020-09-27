@@ -7,8 +7,8 @@ function SceneCounter() {
 }
 
 function Controls() {
-	const nextScene = useStore((state) => state.nextScene)
-	const removeAllScene = useStore((state) => state.removeAllScenes)
+	const nextScene = useStore((state) => state.actions.nextScene)
+	const removeAllScene = useStore((state) => state.actions.removeAllScenes)
 	return (
 		<div className="controller-btns">
 			<button onClick={nextScene}>one up</button>

@@ -1,10 +1,9 @@
 import * as THREE from 'three'
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useFrame, useLoader } from 'react-three-fiber'
 import texture from './texture/oak_leaf.png'
 
-const colors = ['#A2FFB6', '#AAEEB5', '#EE786E', '#EE786E']
-const LeafsNumber = 12
+const LeafsNumber = 24
 
 function LeafSystem(props) {
 	const ref = useRef()

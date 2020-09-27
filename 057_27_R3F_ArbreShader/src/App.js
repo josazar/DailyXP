@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react'
+import React, { Suspense } from 'react'
 import { Canvas, useFrame, useThree } from 'react-three-fiber'
 import { OrbitControls, Html } from 'drei'
 import { PointsCloudModel } from './3d/pointsCloudModel/PointsCloudModel'
@@ -13,9 +13,8 @@ import FPSStats from 'react-fps-stats'
 const CameraLookAt = () => {
 	const { camera } = useThree()
 	useFrame(() => {
-		camera.lookAt(0, 1.5, 0)
+		camera.lookAt(0, 0.75, 0.5)
 	})
-
 	return null
 }
 
@@ -24,7 +23,7 @@ export default function App() {
 	return (
 		<>
 			<Canvas
-				camera={{ fov: 70, position: [0.5, 1.5, 4] }}
+				camera={{ fov: 70, position: [-2, 1, 0.5] }}
 				colorManagement
 				onClick={actions.rain}
 			>
@@ -37,10 +36,10 @@ export default function App() {
 						</Html>
 					}
 				>
-					{/* <PointsCloudModel position={[0, -2, 0]} /> */}
+					<PointsCloudModel position={[0, -2, 0]} />
 					<Water />
-					<RainManager />
 					<LeafSystem position={[-0.5, 1, -0.5]} />
+					<RainManager />
 				</Suspense>
 
 				<OrbitControls

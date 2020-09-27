@@ -1,59 +1,73 @@
 import * as THREE from 'three'
-import { PI } from '../utils/math.utils'
-import React, { useState, useRef } from 'react'
+import React, { useRef } from 'react'
 import { useFrame } from 'react-three-fiber'
-import { Group, Vector3 } from 'three'
-import { Wave } from './Water/Wave'
 import { useStore } from '../Store'
 
 const lightgreen = new THREE.Color('lightgreen')
-const geometry = new THREE.BoxBufferGeometry(0.01, 0.25, 0.01)
-const laserMaterial = new THREE.MeshBasicMaterial({ color: lightgreen })
+const geometry = new THREE.BoxBufferGeometry(0.01, 0.1, 0.01)
+const acornMaterial = new THREE.MeshBasicMaterial({ color: lightgreen })
 
-/**
- * Rain Manager
- *
- */
 export const RainManager = () => {
-	const container = useRef()
 	const acornGroup = useRef()
 	const acorns = useStore((state) => state.acorns)
-	const actions = useStore((state) => state.actions)
-	let waves = []
+	const wait = 800
 
-	useFrame(() => {
-		// Water waves
-		for (let i = 0; i < waves.length; i++) {
-			const element = waves[i]
-			element.update()
-		}
-		// falling acorns
-		let toRemove = null
+	useFrame((state, delta) => {
 		for (let i = 0; i < acorns.length; i++) {
-			const group = acornGroup.current.children[i]
-			group.position.y -= 0.1
+			// Falling acorn
+			acornGroup.current.children[i].children[0].position.y -= 0.1
+			// Water rings
+			// wait an instant before to see the waves circles
+			let diff = Date.now() - acorns[i].time
+			if (diff < wait) {
+				acornGroup.current.children[i].children[1].material.opacity = 0
+				acornGroup.current.children[i].children[2].material.opacity = 0
+			}
+			if (diff > wait && diff < wait + 200) {
+				acornGroup.current.children[i].children[1].material.opacity = 1
+				acornGroup.current.children[i].children[2].material.opacity = 1
+			}
+			if (diff > wait + 200) {
+				acornGroup.current.children[i].children[1].material.opacity -= 0.01
+				acornGroup.current.children[i].children[2].material.opacity -= 0.01
+				acornGroup.current.children[i].children[1].geometry.scale(
+					1.02 - diff / 200000,
+					1.02 - diff / 200000,
+					1.02 - diff / 200000
+				)
+				acornGroup.current.children[i].children[2].geometry.scale(
+					1.02 - diff / 200000,
+					1.02 - diff / 200000,
+					1.02 - diff / 200000
+				)
+				if (diff > 3000) {
+					acornGroup.current.children[i].children[1].position.y = -1
+					acornGroup.current.children[i].children[2].position.y = -1
+				}
+			}
 		}
 	})
+
 	return (
-		<>
-			<Wave position={[2, 0, 2]}></Wave>
-			<group ref={container}>
-				<group ref={acornGroup}>
-					{acorns.map((t, i) => (
-						<group key={i}>
-							<mesh
-								position={[acorns[i].x, 5, acorns[i].z]}
-								geometry={geometry}
-								material={laserMaterial}
-							/>
-						</group>
-						// Waves
-					))}
-					{/* {acorns.map((t, i) => (
-					<Wave key={i} position={[acorns[i].x, 0, acorns[i].z]}></Wave>
-				))} */}
+		<group ref={acornGroup}>
+			{acorns.map((t, i) => (
+				<group key={i} position={[acorns[i].x, 0, acorns[i].z]}>
+					<mesh
+						position={[0, 5, 0]}
+						geometry={geometry}
+						material={acornMaterial}
+					/>
+					{/* Water circle */}
+					<mesh rotation={[Math.PI / 2, 0, 0]}>
+						<ringGeometry args={[0.08, 0.084, 32]} />
+						<meshBasicMaterial transparent side={THREE.DoubleSide} />
+					</mesh>
+					<mesh rotation={[Math.PI / 2, 0, 0]}>
+						<ringGeometry args={[0.04, 0.041, 32]} />
+						<meshBasicMaterial transparent side={THREE.DoubleSide} />
+					</mesh>
 				</group>
-			</group>
-		</>
+			))}
+		</group>
 	)
 }

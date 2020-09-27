@@ -5,8 +5,6 @@ import { Reflector } from './Reflector'
 
 export const Water = (props) => {
 	const ref = useRef()
-	const waterFake = useRef()
-
 	var geometry = new THREE.CircleBufferGeometry(40, 32)
 	let water = new Reflector(geometry, {
 		clipBias: 0.003,

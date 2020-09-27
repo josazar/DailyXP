@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import * as THREE from 'three'
-import { useLoader, useFrame, useThree } from 'react-three-fiber'
+import { useLoader, useFrame } from 'react-three-fiber'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { fragmentShader } from './shader/fragment.js'
 import { vertexShader } from './shader/vertex.js'
