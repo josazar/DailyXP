@@ -26,14 +26,14 @@ export default function App() {
 	return (
 		<>
 			<Canvas
-				camera={{ fov: 70, position: [0, 2, 2] }}
+				camera={{ fov: 70, position: [0, 2, 4] }}
 				colorManagement
 				onClick={actions.rain}
 				id="mainCanvas"
 			>
 				<ExportAsPNG />>
 				<color attach="background" args={['#0c1216']} />
-				<fog attach="fog" args={['#11191f', 2, 10]} />
+				<fog attach="fog" args={['#11191f', 10, 20]} />
 				<Suspense
 					fallback={
 						<Html>
@@ -42,8 +42,8 @@ export default function App() {
 					}
 				>
 					<Water />
-					<PointsCloudModel models={[0, 2]} position={[-1, -2, 0]} />
-					<Deer />
+					<PointsCloudModel models={[0, 1]} position={[0, -2, 0]} />
+					<Deer position={[1.5, 0, -1.5]} rotation={[0, Math.PI / 4, 0]} />
 					<LeafSystem position={[-0.5, 1, -0.5]} />
 					<RainManager />
 				</Suspense>
@@ -51,7 +51,7 @@ export default function App() {
 					// enableZoom={false}
 					enableKeys={false}
 					// enablePan={false}
-					maxPolarAngle={PI / 2}
+					maxPolarAngle={PI / 2.4}
 					dampingFactor={0.3}
 				/>
 				<CameraLookAt />

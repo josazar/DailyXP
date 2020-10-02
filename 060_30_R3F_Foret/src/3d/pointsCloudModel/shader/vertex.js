@@ -75,7 +75,7 @@ vec3 swirl(vec3 p,float i,float dist){
 
     float phytoncideSize=(2.+size*15.)*(1./-mvPosition.z);
 
-    gl_PointSize=mix(2.+(size*5.)*(1./-mvPosition.z),phytoncideSize,phytoncide);
+    gl_PointSize=mix(1.5+(size*5.)*(1./-mvPosition.z),phytoncideSize,phytoncide);
     gl_Position = projectionMatrix * mvPosition;
   }
 `

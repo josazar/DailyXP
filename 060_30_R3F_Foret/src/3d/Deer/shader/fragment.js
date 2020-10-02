@@ -47,14 +47,18 @@ float lines(in vec2 pos,float b){
 
 void main(){
   vec2 pos=vUv;
+
+  /*
   //  ZEBRE
   float pattern=pos.x;
   // Add noise
   pos=rotate2d(noise(pos))*pos*10.;
   // Draw lines
   pattern=lines(pos,.5);
-  gl_FragColor=vec4(vec3(pattern),.6);
-  // gl_FragColor=vec4(vec3(1.),.85);
+  gl_FragColor=vec4(vec3(pattern),.6);*/
+
+
+  gl_FragColor=vec4(vec3(1.),.15);
 
 }
 `

@@ -1,0 +1,10 @@
+body {
+  margin: 20px;
+  background-color: #0d1b2a;
+  color: #e0e1dd;
+}
+
+.sentence,
+.sentence div {
+  opacity: 0;
+}

@@ -8,13 +8,13 @@ import { easeInOutQuart } from '../../utils/easing.utils'
 
 // Models
 import arbreDuo from './Models/arbre_duo_low.ply'
-import tree_1 from './Models/tree_1_low.ply'
-import arbre_liane_1 from './Models/arbre_liane_1_low.ply'
-import arbre_liane_2 from './Models/arbre_liane_2_low.ply'
-import arbre_riviere from './Models/arbre_riviere_low.ply'
-import lieu_sacre from './Models/lieusacre_low.ply'
-import menhir from './Models/menhir_low.ply'
-import ruine from './Models/ruine_low.ply'
+import tree_1 from './Models/tree_1_low_decoupe.ply'
+import arbre_liane_1 from './Models/arbre_liane_1_low_decoupe.ply'
+import arbre_liane_2 from './Models/arbre_liane_2_low_decoupe.ply'
+import arbre_riviere from './Models/arbre_riviere_low_decoupe.ply'
+import lieu_sacre from './Models/lieusacre_low_decoupe.ply'
+import menhir from './Models/menhir_low_decoupe.ply'
+import ruine from './Models/ruine_low_decoupe.ply'
 
 export const PointsCloudModel = (props) => {
 	// ******************************************************************************
@@ -57,7 +57,7 @@ export const PointsCloudModel = (props) => {
 		vertexShader: vertexShader,
 		fragmentShader: fragmentShader,
 		transparent: true,
-		alphaTest: 0.5,
+		alphaTest: 0.25,
 		blending: THREE.NormalBlending,
 		depthTest: false,
 		fog: true,

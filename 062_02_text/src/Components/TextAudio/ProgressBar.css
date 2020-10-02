@@ -1,0 +1,16 @@
+/* Speech Progress Bar */
+.progress-bar {
+  margin: 2em 0;
+  background-color: #1b263b;
+  width: 100%;
+  height: 8px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: #778da9;
+  transition: 0.2s ease;
+  /* transition-delay: 0.1s; */
+}

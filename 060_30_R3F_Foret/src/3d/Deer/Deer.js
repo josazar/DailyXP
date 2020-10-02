@@ -8,7 +8,7 @@ import { vertexShader } from './shader/vertex.js'
 import { fragmentShader } from './shader/fragment.js'
 import gltfURL from './gltf/scene-processed.glb'
 
-export const Deer = () => {
+export const Deer = (props) => {
 	const actions = useRef({})
 	let activeAction = useRef(null)
 	let lastAction = useRef(null)
@@ -37,12 +37,15 @@ export const Deer = () => {
 	// *******************************************
 	const animations = gltf.animations
 	const [mixer] = useState(() => new THREE.AnimationMixer(gltf.scene))
+	mixer.timeScale = 0.5
 
 	// SETUP All Animations Actions
 	// ********************************************
 	useEffect(() => {
 		actions.current = {
 			eat1: mixer.clipAction(animations[7]),
+			eat2: mixer.clipAction(animations[8]),
+			eat3: mixer.clipAction(animations[9]),
 			iddle2: mixer.clipAction(animations[20]),
 			iddle3: mixer.clipAction(animations[21]),
 			walkBack: mixer.clipAction(animations[51]),
@@ -57,7 +60,7 @@ export const Deer = () => {
 		actions.current.walkLeft.clampWhenFinished = true
 
 		// Play the initial actions
-		activeAction.current = actions.current.walkForward
+		activeAction.current = actions.current.eat1
 		activeAction.current.play()
 
 		mixer.addEventListener('loop', (e) => {
@@ -94,7 +97,7 @@ export const Deer = () => {
 		<primitive
 			object={gltf.scene}
 			scale={[0.0075, 0.0075, 0.0075]}
-			position={[0.8, 0, -1]}
+			{...props}
 		/>
 	)
 }

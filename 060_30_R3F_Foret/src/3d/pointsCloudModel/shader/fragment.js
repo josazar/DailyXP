@@ -22,7 +22,7 @@ void main() {
   float dist=length(gl_PointCoord-vec2(.5));
   float disc=smoothstep(.5,.49,dist);
   vec3 col=mix(vColor,vColorB,u_lerp);
-  col*=1.4;
+  col*=1.2;
   gl_FragColor=vec4(col,disc*.7*t);
 
   // FOG color
