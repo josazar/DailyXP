@@ -1,28 +1,43 @@
 {
 	"story": [{
-			"id": 0,
 			"text": "For just a moment I will be your guide. ",
-			"data_time": 0
+			"data_time": 0.1
 		},
 		{
-			"id": 1,
 			"text": "Please come with me and discover this hidden paradise. ",
-			"data_time": 0
+			"data_time": 3.2
 		},
 		{
-			"id": 2,
-			"text": "Today, with you, I want to highlight the growing need for more communication between the trees and us, the humankind. ",
-			"data_time": 0
+			"text": "Today, with you, ",
+			"data_time": 7
 		},
 		{
-			"id": 3,
-			"text": "A few weeks ago, when I went running in the forest, I heard the voice of Jodorowsky.",
-			"data_time": 0
+			"text": "I want to highlight the growing need for more communication between the trees and us, the humankind. ",
+			"data_time": 9
 		},
 		{
-			"id": 4,
-			"text": "And he asked me “Hey Joseph, what is the craziest thing you want to do in your life? I want you to do something crazy!” ",
-			"data_time": 0
+			"text": "A few weeks ago, ",
+			"data_time": 14
+		},
+		{
+			"text": "when I went running in the forest, I heard the voice of Jodorowsky. ",
+			"data_time": 16
+		},
+		{
+			"text": "And he asked me: ",
+			"data_time": 20
+		},
+		{
+			"text": "“Hey Joseph, ",
+			"data_time": 22.5
+		},
+		{
+			"text": "what is the craziest thing you want to do in your life? ",
+			"data_time": 24.5
+		},
+		{
+			"text": "I want you to do something crazy!” ",
+			"data_time": 29.5
 		}
 	]
 }

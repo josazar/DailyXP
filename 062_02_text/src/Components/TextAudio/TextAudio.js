@@ -2,32 +2,35 @@ import React, { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import SplitText from '../../vendors/gsap/SplitText'
 import json from './story.json'
+import { useStore } from '../../store'
 
 /* TODO:
-_ create a JSON file
-_ add data-time attribute to each sentences
+X create a JSON file
+X add data-time attribute to each sentences
+_ afficher Opacity 1 si data-time <= currenTime
 */
 export const TextAudio = () => {
-	console.log('render Text Audio')
-
 	const textRef = useRef()
 	const splitText = useRef()
 	const wordElements = useRef([])
+	const currentPhrase = useStore((state) => state.currentPhrase)
+	console.log('Render Text audio')
 
 	useEffect(() => {
 		splitText.current = new SplitText(textRef.current, { type: 'words' })
-		wordElements.current.map((value) => (value.style.opacity = 1))
-		handleAnim()
 	}, [])
+	useEffect(() => {
+		if (currentPhrase !== -1) showElement(wordElements.current[currentPhrase])
+	}, [currentPhrase])
 
-	const handleAnim = () => {
-		wordElements.current.map((value, index) =>
-			gsap.fromTo(
-				value.children,
-				{ opacity: 0 },
-				{ duration: 2, opacity: 1, stagger: 0.1 }
-			)
-		)
+	const showElement = (elem) => {
+		// gsap.fromTo(elem, { opacity: 0 }, { duration: 1, opacity: 1, stagger: 0.1 })
+		// gsap.fromTo(
+		// 	elem.children,
+		// 	{ opacity: 0 },
+		// 	{ duration: 0.75, opacity: 1, stagger: 0.25 }
+		// )
+		gsap.to(elem.children, { duration: 0.45, color: 'white', stagger: 0.25 })
 	}
 
 	return (

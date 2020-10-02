@@ -2,10 +2,11 @@ import create from 'zustand'
 
 export const useStore = create((set, get) => {
 	return {
-		currenTime: 0,
-		totalTime: 10,
+		currentTime: 0,
+		totalTime: 32,
+		currentPhrase: -1,
 		increasePercent: () => set((state) => ({ percent: state.percent + 1 })),
 		increaseTime: (diff) =>
-			set((state) => ({ currenTime: state.currenTime + diff })),
+			set((state) => ({ currentTime: state.currentTime + diff })),
 	}
 })

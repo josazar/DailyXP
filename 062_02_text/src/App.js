@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { TextAudio } from './Components/TextAudio/TextAudio'
-import { ProgressBar } from './Components/TextAudio/ProgressBar'
+import { ProgressManager } from './Components/TextAudio/ProgressManager'
 
 function App() {
 	return (
 		<div className="App">
 			<TextAudio />
-			<ProgressBar />
+			<ProgressManager />
 		</div>
 	)
 }
