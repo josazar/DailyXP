@@ -8,11 +8,11 @@ export const ProgressBar = () => {
 	const increaseTime = useStore((state) => state.increaseTime)
 	const [finished, setFinished] = useState(false)
 
-	const percent = currenTime / totalTime
+	const percent = (currenTime / totalTime) * 100
 
 	useEffect(() => {
 		const intervalID = setInterval(() => {
-			if (currenTime < totalTime * 100) increaseTime(10)
+			if (currenTime < totalTime) increaseTime(0.1)
 			else {
 				setFinished(true)
 				clearInterval(intervalID)
@@ -29,6 +29,7 @@ export const ProgressBar = () => {
 			<div className="progress-bar">
 				<div style={{ width: `${percent}%` }} className="progress"></div>
 			</div>
+			<span>{Math.trunc(currenTime)}</span>
 			{finished && <p>THE END!</p>}
 		</>
 	)
