@@ -5,7 +5,8 @@ import { Reflector } from './Reflector'
 
 export const Water = (props) => {
 	const ref = useRef()
-	var geometry = new THREE.CircleBufferGeometry(80, 32)
+	const radius = 66
+	var geometry = new THREE.CircleBufferGeometry(radius, 128)
 	let water = new Reflector(geometry, {
 		clipBias: 0.003,
 		textureWidth: window.innerWidth * window.devicePixelRatio,
@@ -24,13 +25,9 @@ export const Water = (props) => {
 	return (
 		<group>
 			<primitive object={water} ref={ref} {...props}></primitive>
-			<mesh
-				rotation={[-Math.PI / 2, 0, 0]}
-				position={[0, -0.1, 0]}
-				name="waterFake"
-			>
-				<circleBufferGeometry args={[82, 32]} />
-				<meshBasicMaterial color={'#2b474f'} depthTest={true} />
+			<mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
+				<circleBufferGeometry args={[radius + 0.05, 128]} />
+				<meshBasicMaterial color={0x0e0d27} depthTest={true} />
 			</mesh>
 		</group>
 	)

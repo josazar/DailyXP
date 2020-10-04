@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import React, { useRef } from 'react'
 import { useFrame } from 'react-three-fiber'
-import { useStore } from '../Store'
+import { useStore } from '../../Store'
 
 const lightgreen = new THREE.Color('lightgreen')
 const geometry = new THREE.BoxBufferGeometry(0.01, 0.1, 0.01)

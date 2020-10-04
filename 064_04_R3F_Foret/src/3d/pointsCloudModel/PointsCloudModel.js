@@ -37,7 +37,8 @@ export const PointsCloudModel = (props) => {
 	const play = useRef(false)
 	const rewind = useRef(false)
 	const swirl = useRef(false)
-	const { scene } = useThree()
+	// const { scene } = useThree()
+	const { scene } = props
 
 	// ******************************************************************************
 	// LOADER
@@ -59,14 +60,13 @@ export const PointsCloudModel = (props) => {
 		transparent: true,
 		alphaTest: 0.25,
 		blending: THREE.NormalBlending,
-		depthTest: false,
+		depthTest: true,
 		fog: true,
 	})
 
 	//
 	// *****************************************************
 	useEffect(() => {
-		console.log('use Effect')
 		const number = geometryA.attributes.color.count
 		let colorsB = new Float32Array(number * 3)
 		let positionB = new Float32Array(number * 3)
