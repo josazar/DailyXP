@@ -1,4 +1,6 @@
 export const vertexShader = `varying vec2 vUv;
+// Skinned Characters Custom Shader
+// https://webglfundamentals.org/webgl/lessons/webgl-skinning.html
 
 uniform mat4 bindMatrix;
 uniform mat4 bindMatrixInverse;

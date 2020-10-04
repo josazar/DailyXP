@@ -9,6 +9,7 @@ import { PointsCloudModel } from './3d/pointsCloudModel/PointsCloudModel'
 import { Firefly } from './3d/Firefly/Firefly'
 import { LeafSystem } from './3d/OakLeafs/Leaf'
 import { RainManager } from './3d/Rain/Rain.js'
+import { OrbitControls, Html } from 'drei'
 
 import { ExportAsPNG } from './utils/ExportAsPNG'
 
@@ -31,9 +32,10 @@ export const World = (props) => {
 		setDefaultCamera(camera.current)
 		console.log(gltf.animations)
 		actions.current = {
-			travelling: mixer.clipAction(gltf.animations[1], group.current),
-			zoomIn: mixer.clipAction(gltf.animations[2], group.current),
 			panoramique: mixer.clipAction(gltf.animations[0], group.current),
+			travelling: mixer.clipAction(gltf.animations[1], group.current),
+			turnAround: mixer.clipAction(gltf.animations[2], group.current),
+			zoomIn: mixer.clipAction(gltf.animations[3], group.current),
 		}
 		// setup action
 		actions.current.travelling.setLoop(THREE.LoopPingPong)
@@ -41,10 +43,11 @@ export const World = (props) => {
 		actions.current.zoomIn.setLoop(THREE.LoopPingPong)
 		// actions.current.zoomIn.clampWhenFinished = true
 		actions.current.panoramique.setLoop(THREE.LoopPingPong)
+		actions.current.turnAround.setLoop(THREE.LoopPingPong)
 		// actions.current.panoramique.clampWhenFinished = true
 
 		// Play Camera animation on mount, Root (group.current) correspond to all the World
-		actions.current.travelling.play()
+		// actions.current.travelling.play()
 		// Uncache animations and set back the original cam on unmount
 		return () => {
 			setDefaultCamera(defaultCamera)
@@ -75,6 +78,12 @@ export const World = (props) => {
 				actions.current.panoramique.reset()
 				actions.current.panoramique.play()
 			}
+			// turnAround
+			if (e.key === '3') {
+				mixer.stopAllAction()
+				actions.current.turnAround.reset()
+				actions.current.turnAround.play()
+			}
 		})
 	}, []) // By passing an an empty Array, as dependency, the useEffect hook will only run a single time.
 
@@ -87,17 +96,18 @@ export const World = (props) => {
 						<perspectiveCamera
 							ref={camera}
 							name="Camera_Orientation"
-							position={[-1, 1, 5]}
+							position={[2, 0.5, 5]}
+							fov={30}
 						/>
 					</object3D>
 					{/* 3D Models*/}
 					<color attach="background" args={[0x0e0d27]} />
 					<fog attach="fog" args={[0x0e0d27, 15, 25]} />
 					<Water />
-					{/* <Deer position={[1.5, 0, -1.5]} rotation={[0, Math.PI / 4, 0]} /> */}
+					<Deer position={[1.5, 0, -7.5]} />
 					<PointsCloudModel
 						models={[4, 6]}
-						position={[0, -2, 1]}
+						position={[4, -2, 1]}
 						scene={scene.current}
 					/>
 					<PointsCloudModel
@@ -108,6 +118,14 @@ export const World = (props) => {
 					<Firefly />
 					<LeafSystem position={[-0.5, 1, -0.5]} />
 					<RainManager />
+					{/*
+					<OrbitControls
+						// enableZoom={false}
+						enableKeys={false}
+						// enablePan={false}
+						maxPolarAngle={Math.PI / 2.1}
+						dampingFactor={0.3}
+					/> */}
 				</scene>
 			</group>
 		</>

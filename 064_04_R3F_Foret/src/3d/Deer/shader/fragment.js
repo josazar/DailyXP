@@ -1,5 +1,5 @@
 export const fragmentShader = `
-uniform vec2 resolution;
+uniform vec2 u_resolution;
 uniform float u_time;
 varying vec2 vUv;
 
@@ -44,12 +44,35 @@ float lines(in vec2 pos,float b){
     .5+b*.5,
     abs((sin(pos.x*3.1415)+b*2.))*.5);
   }
-
+  #define PI 3.14159265359
 void main(){
-  vec2 pos=vUv;
+
+  vec2 uv=vUv;
+
+  // Use polar coordinates instead of cartesian
+  vec2 toCenter = vec2(0.5)-uv;
+  float angle = atan(toCenter.y, toCenter.x);
+  float radius = length(toCenter)*2.0;
+
+  float background = uv.y + 0.5;
+  float curvePi = PI*(angle - sin(u_time + radius));
+  float curves = cos(uv.y*curvePi) + sin(uv.x*curvePi);
+
+  float r = sin(background*.27);
+  float g = cos(curves);
+  float b = 1.; // influences color of bg & curves
+
+  vec3 color = vec3(r, g, b); // bg & curves
+  vec3 softenColor = mix(
+      color,
+      vec3(0.15, .8, 0.5),
+      0.5 // interpolation value - floating number
+  );
+
 
   /*
   //  ZEBRE
+  vec2 pos=vUv;
   float pattern=pos.x;
   // Add noise
   pos=rotate2d(noise(pos))*pos*10.;
@@ -57,8 +80,16 @@ void main(){
   pattern=lines(pos,.5);
   gl_FragColor=vec4(vec3(pattern),.6);*/
 
+  vec2 pos=vUv;
+  float pattern=pos.x;
+  // Add noise
+  pos=rotate2d(noise(pos))*pos*10.;
+  // Draw lines
+  pattern=lines(pos,.5);
+  vec3 zebre = mix(softenColor, vec3(pattern),0.5);
 
-  gl_FragColor=vec4(vec3(1.),.75);
+  gl_FragColor = vec4(zebre, 1.);
+
 
 }
 `

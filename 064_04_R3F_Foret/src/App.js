@@ -25,13 +25,6 @@ export default function App() {
 				onClick={actions.rain}
 				id="mainCanvas"
 			>
-				{/* <OrbitControls
-					enableZoom={false}
-					enableKeys={false}
-					enablePan={false}
-					maxPolarAngle={PI / 2.4}
-					dampingFactor={0.3}
-				/> */}
 				<Suspense fallback={null}>
 					<World />
 				</Suspense>

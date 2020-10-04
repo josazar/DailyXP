@@ -21,6 +21,10 @@ export const Deer = (props) => {
 		},
 		uniforms: {
 			u_time: { type: 'f', value: 0 },
+			u_resolution: {
+				type: 'v2',
+				value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+			},
 		},
 		vertexShader: vertexShader,
 		fragmentShader: fragmentShader,
@@ -60,7 +64,7 @@ export const Deer = (props) => {
 		actions.current.walkLeft.clampWhenFinished = true
 
 		// Play the initial actions
-		activeAction.current = actions.current.eat1
+		activeAction.current = actions.current.walkForward
 		activeAction.current.play()
 
 		mixer.addEventListener('loop', (e) => {
@@ -76,6 +80,7 @@ export const Deer = (props) => {
 	// ********************************************
 	useFrame((state, delta) => {
 		mixer.update(delta)
+		material.uniforms.u_time.value = state.clock.getElapsedTime()
 	})
 
 	// setActions Animation
