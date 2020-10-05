@@ -70,6 +70,7 @@ void main(){
   float b=cos(pos.y);
   vec3 background=vec3(r,g,b);
   
+  
   pos.x+=sin(u_time)*.5;
   pos.y+=cos(u_time)*.5;
   pos*=sin(loopease(.5)*2.)*.5+.5;
