@@ -118,14 +118,14 @@ export const World = (props) => {
 					<Firefly />
 					<LeafSystem position={[-0.5, 1, -0.5]} />
 					<RainManager />
-					{/*
+
 					<OrbitControls
 						// enableZoom={false}
 						enableKeys={false}
 						// enablePan={false}
 						maxPolarAngle={Math.PI / 2.1}
 						dampingFactor={0.3}
-					/> */}
+					/>
 				</scene>
 			</group>
 		</>
