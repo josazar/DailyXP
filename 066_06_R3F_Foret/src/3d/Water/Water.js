@@ -27,7 +27,7 @@ export const Water = (props) => {
 			<primitive object={water} ref={ref} {...props}></primitive>
 			<mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
 				<circleBufferGeometry args={[radius + 0.05, 128]} />
-				<meshBasicMaterial color={0x0e0d27} depthTest={true} />
+				<meshBasicMaterial color={0x262721} depthTest={true} />
 			</mesh>
 		</group>
 	)

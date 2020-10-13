@@ -11,10 +11,12 @@ import arbreDuo from './Models/arbre_duo_low.ply'
 import tree_1 from './Models/tree_1_low_decoupe.ply'
 import arbre_liane_1 from './Models/arbre_liane_1_low_decoupe.ply'
 import arbre_liane_2 from './Models/arbre_liane_2_low_decoupe.ply'
+import arbre_liane_3 from './Models/arbre_liane_3.ply'
 import arbre_riviere from './Models/arbre_riviere_low_decoupe.ply'
 import lieu_sacre from './Models/lieusacre_low_decoupe.ply'
 import menhir from './Models/menhir_low_decoupe.ply'
 import ruine from './Models/ruine_low_decoupe.ply'
+import cheneJo from './Models/CheneJoseph.ply'
 
 export const PointsCloudModel = (props) => {
 	// ******************************************************************************
@@ -29,6 +31,8 @@ export const PointsCloudModel = (props) => {
 		lieu_sacre, // 5
 		menhir, // 6
 		ruine, // 7
+		cheneJo, // 8
+		arbre_liane_3, // 9
 	]
 	const ratioPhytoncides = 50 // 1 sur x
 	let step = 0

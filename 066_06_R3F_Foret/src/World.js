@@ -9,7 +9,7 @@ import { PointsCloudModel } from './3d/pointsCloudModel/PointsCloudModel'
 import { Firefly } from './3d/Firefly/Firefly'
 import { LeafSystem } from './3d/OakLeafs/Leaf'
 import { RainManager } from './3d/Rain/Rain.js'
-import { OrbitControls, Html } from 'drei'
+import { OrbitControls, Html, FlyControls } from 'drei'
 
 import { ExportAsPNG } from './utils/ExportAsPNG'
 
@@ -96,25 +96,21 @@ export const World = (props) => {
 						<perspectiveCamera
 							ref={camera}
 							name="Camera_Orientation"
-							position={[2, 0.5, 5]}
-							fov={30}
+							position={[0, 3, 5]}
+							fov={60}
 						/>
 					</object3D>
 					{/* 3D Models*/}
-					<color attach="background" args={[0x0e0d27]} />
-					<fog attach="fog" args={[0x0e0d27, 15, 25]} />
+					<color attach="background" args={[0x0f100b]} />
+					<fog attach="fog" args={[0x0f100b, 20, 25]} />
 					<Water />
-					<Deer position={[1.5, 0, -7.5]} />
+					{/* <Deer position={[1.5, 0, -7.5]} /> */}
 					<PointsCloudModel
-						models={[4, 6]}
-						position={[4, -2, 1]}
+						models={[9, 0]}
+						position={[0, -2, 0]}
 						scene={scene.current}
 					/>
-					<PointsCloudModel
-						models={[7, 0]}
-						position={[-2, -2, -6]}
-						scene={scene.current}
-					/>
+
 					<Firefly />
 					<LeafSystem position={[-0.5, 1, -0.5]} />
 					<RainManager />
@@ -123,9 +119,10 @@ export const World = (props) => {
 						// enableZoom={false}
 						enableKeys={false}
 						// enablePan={false}
-						maxPolarAngle={Math.PI / 2.1}
+						// maxPolarAngle={Math.PI / 2.1}
 						dampingFactor={0.3}
 					/>
+					{/* <FlyControls movementSpeed={5} /> */}
 				</scene>
 			</group>
 		</>
