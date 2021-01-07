@@ -21,22 +21,26 @@ void main()
 {
   vec2 uv=(gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
   vec3 col=vec3(0);
-  uv*=15.;
+  uv+=u_time*.05;
+  uv*=10.;
   vec2 gv=fract(uv)-.5;
   vec2 id=floor(uv);
-  
-  float n=Hash21(id);// random number between 0 and 1
-  float width=.15;
-  
-  // if(n<.5)gv.x*=-1.;
-  float d=abs(abs(gv.x+gv.y)-.5);
-  d=length(abs(gv)-vec2(.0))+id.x*.05*cos(u_time);
-  float mask=smoothstep(.01,-.01,d-width);
-  // mask+=smoothstep(.01,-.01,abs(gv.x+gv.y-.99)-width);
-  // mask+=smoothstep(.01,-.01,abs(gv.x+gv.y+.99)-width);
-  
-  col+=mask;
-  // col+= n;
-  // if(gv.x>.48||gv.y>.48)col=vec3(1,0,0);
+  float n=Hash21(id);
+  float width=.1;
+  if(n<.5)gv.x*=-1.;
+  float d=abs(abs(gv.x+gv.y));
+  float dir=1.;
+  if((gv.x+gv.y)<0.)dir=-1.;
+  vec2 cUv=gv-.5*dir;
+  d=length(cUv);
+  float angle=atan(cUv.x,cUv.y);
+  float checker=mod(id.x+id.y,2.)*2.-1.;
+  float mask=smoothstep(.01,-.01,abs(d-.5)-width);
+  float flow=sin(u_time+checker*angle*10.);
+  float x=fract(angle/1.57);
+  float y=(d-(.5-width))/(2.*width);
+  y=abs(y-.5)*2.;
+  vec2 tUv=vec2(x,y);
+  col.rg+=mask*flow;
   gl_FragColor=vec4(col,1.);
 }
