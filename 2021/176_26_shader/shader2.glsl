@@ -65,11 +65,14 @@ void main() {
   p*=.5;
   float line = plot(p, 1.);
   float lineTop = plot(p, 1.2);
-  for (int i=0; i<20; i++) {
+  for (int i=0; i<5; i++) {
     vec2 tri = vec2(0.08,-.1*cos(float(i+1)+u_time*2.5)); // width, height
-    float d = sdTriangleIsosceles( p - vec2((float(i)*.1)+.46,1.1*(noise+cos(u_time))*0.05+1.05), tri );
+    vec2 triReverse = vec2(0.099,-.21*sin(float(i+1)+u_time*3.8*noise*.2)); // width, height
+    float d = sdTriangleIsosceles( p - vec2((float(i)*.21)+.46,1.1*(noise+cos(u_time))*0.05+1.05), tri );
+    float d2 = sdTriangleIsosceles( p - vec2((float(i)*.21)+.46,1.1*(noise+sin(u_time))*0.05+1.05), triReverse );
     d = sign(d);
-    col += vec3(1.-float(i)*0.006) - d ;
+    d2 = sign(d2);
+    col += vec3(1.-float(i)*0.006) - d2  ;
   }
   gl_FragColor = vec4(col,1.0);
 }
