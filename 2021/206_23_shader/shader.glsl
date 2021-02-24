@@ -89,7 +89,13 @@ float noise(vec3 p)
 
 vec2 hash12(float t) {
 	float x = fract(sin(t*674.3)*453.2);
- 	float y = fract(sin(t+x)*714.3)*263.2;
+ 	float y = fract(sin((t+x)*714.3)*263.2);
+ return vec2(x,y);
+
+}
+vec2 hash12_polar(float t) {
+	float x = fract(sin(t*674.3)*453.2);
+ 	float y = fract(sin((t+x)*714.3)*263.2);
  return vec2(x,y);
 
 }
@@ -111,20 +117,20 @@ void main() {
 
 	// noise
 	float n = map(vec3(cos(u_time)*.1, st.x, st.y));
-	n*=.81;
+	n*=.1;
 	float offset=.05;
 	st.x += n;
 	float c = circleSDF(st);
-	// color += step(c, .5+offset);
-	// color -= step(.31/c, .5+n)*2.;
-	// color += step(.5,fract(c*(4. * (1.-n*8.)))-.1);
+	color += step(c, .25+offset);
+	color -= step(.31/c, .5+n)*2.;
+	color += step(.5,fract(c*(4. * (1.-n*8.)))-.1);
 
-	for(float i= 0.; i< 20.; i++) {
-		vec2 dir = hash12(i+1.)-.5;
-		float t = fract(u_time*.003);
-		float l = length(st - dir*t);
-		color += .01/l;
-	}
+	// for(float i= 0.; i< 50.; i++) {
+	// 	vec2 dir = hash12(i+1.)-.5;
+	// 	float t = fract(u_time);
+	// 	float l = length(st-dir*t-.35);
+	// 	color += .001/l;
+	// }
 
 	// float cr = crossSDF(st,.002);
 	// color -= fill(cr,10.1);
