@@ -1,16 +1,16 @@
-// Author:
-// Title:
-
-#ifdef GL_ES
 precision mediump float;
-#endif
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
 uniform float u_time;
-uniform sampler2D u_buffer0;
+uniform vec2 u_resolution;
 
-#define THETA 2.399963229728653
+varying vec2 vUv;
+
+
+
+
+
+
+
 #define PI 3.14159265359
 #define TAU PI*2.
 
@@ -178,58 +178,20 @@ float map(vec3 p){
 
 
 
+void main()
+{
+    vec2 st = gl_FragCoord.xy / u_resolution;
+		float ease = easeBackInOut(cos(u_time*.25)*.5+.75);
+    vec3 color = vec3(vUv.x,vUv.x,1.);
+    float alpha = 1.;
+    vec2 uv = vUv;
 
 
+    float c = circleSDF(fract(uv));
+    alpha -= stroke(c, 0.1,0.6);
 
+    alpha -= fill(c, cos(u_time)*.5+.15);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-float raysSDFAnime(vec2 st, int N, float ease) {
-	float c = circleSDF(st);
-	st -= .35;
-	float ray = atan(st.y,st.x)/PI*2.*float(N);
-	ray += u_time;
-	ray += c;
-	ray *= step(c, .45 + cos(ease)*.4);
-
-	return fract(ray);
+		if(alpha < 0.01) discard;
+    gl_FragColor = vec4(color,1.);
 }
-// **************************
-void main() {
-	vec3 color = vec3(0.);
-	vec2 st = gl_FragCoord.xy / u_resolution;
-	// keep ratio
-	st.x *= u_resolution.x/u_resolution.y;
-	float ease = easeBackInOut(cos(u_time)*.5+.5)+.82;
-
-	vec2 off = vec2(.15,.14);
-	st += off;
-	float c = circleSDF(st);
-	color += stroke(c,.12*ease,0.02);
-	color -= step(c, .12*ease)*2.;
-
-	st -= off;
-	float r = raysSDFAnime(st, 12, ease);
-	color += stroke(r,.5,0.1);
-
-	gl_FragColor = vec4(color,1.0);
-}
-
-
-
