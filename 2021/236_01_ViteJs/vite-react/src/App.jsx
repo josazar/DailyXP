@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
-import logo from './logo.svg'
+import * as THREE from 'three'
+import React, { useMemo, useRef, useState } from 'react'
 import './App.css'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { getPoint, getSphere } from './@utils'
+import vertexShader from './glsl/emeter_vs.glsl?raw'
+import fragmentShader from './glsl/emeter_fs.glsl?raw'
+import {
+  OrbitControls,
+} from '@react-three/drei'
+import Particles from './Particles'
 
-import { Canvas } from '@react-three/fiber'
 
 function App() {
-  const [count, setCount] = useState(0)
 
 
   return (
@@ -18,12 +24,9 @@ function App() {
           />
           <directionalLight color="green" position={[0, 4, 5]} />
 
-          <mesh>
-            <sphereBufferGeometry args={[2,20,20]} />
-            <meshPhongMaterial color="white" />
-          </mesh>
+          <Particles />
 
-
+          <OrbitControls  />
         </Canvas>
       </div>
 
@@ -32,3 +35,5 @@ function App() {
 }
 
 export default App
+
+
