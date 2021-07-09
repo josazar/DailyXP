@@ -1,0 +1,7 @@
+.App {
+  text-align: center;
+}
+#canvas-container {
+  width: 100vw;
+  height: 100vh;
+}
