@@ -6,6 +6,7 @@ uniform float amplitude;
 uniform vec2 uMouse;
 
 varying vec2 vUv;
+varying vec3 vPos;
 varying vec2 vMouse;
 varying vec2 vResolution;
 
@@ -143,7 +144,7 @@ return t*t*t*t*t;
 
 
 void main(){
-  vUv = uv;
+  // vUv = uv;
   vMouse = uMouse;
   vResolution = uResolution;
 
@@ -153,6 +154,8 @@ void main(){
   float d=length(pos-tar)/amplitude;
 
   pos=mix(pos,tar,pow(d,easeQuintIn(cos(uTime)  )));
+
+  vPos = pos;
 
   vec4 mvPosition=modelViewMatrix*vec4(pos,1.);
 

@@ -27,7 +27,7 @@ const Particles = () => {
   // BufferGeometry from a Parametric Formula
   const bufferGeometry = useMemo(() => {
     let slices = Math.floor(Math.sqrt(nbParticles)) -1
-    const vertices = generatePositionsFromFormula(ParametricEquations.sphere, nbParticles, slices,slices, 1.5)
+    const vertices = generatePositionsFromFormula(ParametricEquations.mobius3d, nbParticles, slices,slices, 1.5)
     const bufferGeometry = new THREE.BufferGeometry()
     bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
 

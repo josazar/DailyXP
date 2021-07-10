@@ -43,9 +43,9 @@ function PlaneRayTracerTarget({size}) {
     pointer.y = event.point.y
     pointer.z = event.point.z
 
-    pointerSpace.x = event.spaceX
-    pointerSpace.y = event.spaceY
-    useStore.setState({ pointerSpace: {x: pointerSpace.x, y:pointerSpace.y } })
+    // pointerSpace.x = event.spaceX
+    // pointerSpace.y = event.spaceY
+    useStore.setState({ pointerSpace: {x: pointer.x, y:pointer.y } })
   }
 
 
@@ -55,17 +55,17 @@ function PlaneRayTracerTarget({size}) {
     const a = clock.getElapsedTime()
 
     ref.current.lookAt(camera.position)
-    refTarget.current.position.set(pointer.x, pointer.y, pointer.z)
+    // refTarget.current.position.set(pointer.x, pointer.y, pointer.z)
 
-    ref.current.material.uniforms.uTime.value = a
-    ref.current.material.uniforms.uMouse.value = { x: pointerSpace.x,  y: pointerSpace.y}
+    // ref.current.material.uniforms.uTime.value = a
+    // ref.current.material.uniforms.uMouse.value = { x: pointerSpace.x,  y: pointerSpace.y}
   })
 
 
   return (
-    <group>
+    <group visible={false}>
       <mesh ref={ref} onPointerMove={onPointerMove} material={shaderMaterial} >
-        <planeGeometry args={[10,10, 1, 1]} />
+        <planeGeometry args={[20,20, 1, 1]} />
       </mesh>
       <mesh ref={refTarget}>
         <sphereGeometry args={[0.4,12,12]} />

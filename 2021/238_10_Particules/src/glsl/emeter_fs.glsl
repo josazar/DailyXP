@@ -1,6 +1,6 @@
 
 varying vec2 vMouse;
-varying vec2 vUv;
+varying vec3 vPos;
 varying vec2 vResolution;
 
 
@@ -14,11 +14,11 @@ float circle(in vec2 _st, in float _radius){
 void main(){
   // vec2 st = gl_FragCoord.xy/vResolution.xy;
   // st.x *= vResolution.x/vResolution.y;
-  vec3 color = vec3(circle( vec2(0.8) ,0.81));
+  // vec3 color = vec3();
 
   // vec3 color = vec3(vMouse.x);
-  // vec3 color = vec3(circle(-vMouse + vUv,0.01));
-  // color += vec3(vUv.x);
+  vec3 color = vec3(circle(-vMouse + vPos.xy,5.5));
+  color += vec3(vPos.x * .25, .0, .84);
 
   gl_FragColor=vec4(color,1.);
 }
