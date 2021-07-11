@@ -20,7 +20,7 @@ const uniforms = {
 }
 
 const Particles = () => {
-  const [nbParticles, setNbParticles] = useState(50000)
+  const [nbParticles, setNbParticles] = useState(150000)
 
   const ref = useRef()
 

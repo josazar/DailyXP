@@ -156,14 +156,19 @@ void main(){
   pos = mix(pos,tar,pow(d,easeQuintIn(cos(uTime)  )));
 
   vec2 offSet = vec2(distance(pos.xy, vMouse ));
-  float diff = .7;
+  float diff = .6;
 
   if (offSet.x < diff && offSet.y < diff) {
 
-//    pos.x += .3 / offSet.x * .2;
-  //  pos.y += .3 / offSet.y * .2;
-    pos.x *= 1. + cos(offSet.x) * .2;
-    pos.y *= 1. + cos(offSet.y) * .2;
+   pos.x /= offSet.x ;
+   pos.y /= offSet.y ;
+
+    // pos.x *= 1. + cos(offSet.x  );
+    // pos.y *=  1. + cos(offSet.y ) ;
+
+    // pos.x +=  offSet.x ;
+    // pos.y *=  offSet.y ;
+
   }
 
   vPos = pos;
