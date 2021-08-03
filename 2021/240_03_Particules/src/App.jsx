@@ -28,7 +28,7 @@ function App() {
           <Suspense fallback={null}>
             <TreePoints />
           </Suspense>
-          <OrbitControls  />
+          <OrbitControls dampingFactor={0.75} />
         </Canvas>
       </div>
 

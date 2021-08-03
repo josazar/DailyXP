@@ -68,12 +68,12 @@ function PlaneRayTracerTarget({size}) {
 
   return (
     <group visible={true} >
-      <mesh ref={ref} onPointerMove={onPointerMove} material={shaderMaterial} >
+      <mesh ref={ref} onPointerMove={onPointerMove} material={shaderMaterial} visible={false}>
         <planeGeometry args={[20,20, 20, 20]} />
       </mesh>
       <mesh ref={refTarget}>
-        <sphereGeometry args={[0.4,12,12]} />
-        <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+        <sphereGeometry args={[0.2,12,12]} />
+        <meshBasicMaterial color="white" side={THREE.DoubleSide} />
       </mesh>
     </group>
   )

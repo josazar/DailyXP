@@ -25,7 +25,7 @@ const uniforms = {
 
 const TreePoints = () => {
   const [nbParticles, setNbParticles] = useState(150000)
-  const bufferGeometry = useLoader(PLYLoader, '/3D/tree.ply')
+  const bufferGeometry = useLoader(PLYLoader, '/3D/tree_2.ply')
 
   const ref = useRef()
 
@@ -43,8 +43,8 @@ const TreePoints = () => {
   const {camera} = useThree()
 
   useEffect(() => {
-    camera.position.set(0,5,2)
-    camera.lookAt(ref.current.position)
+    // camera.position.set(0,5,2)
+    // camera.lookAt(ref.current.position)
   }, [])
 
   useFrame(({ clock }) => {
