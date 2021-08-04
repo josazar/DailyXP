@@ -39,32 +39,16 @@ function PlaneRayTracerTarget({size}) {
 
   // MouseEvent to get pointer 2D coordinates from -1 to 1 x/y - 0 at the center
   const onPointerMove = (event) => {
-
-    // console.log(event)
-
-
     pointer.x = event.point.x
     pointer.y = event.point.y
     pointer.z = event.point.z
 
-    // pointerSpace.x = event.spaceX
-    // pointerSpace.y = event.spaceY
-    useStore.setState({ pointerSpace: {x: pointer.x, y:pointer.y, z: pointer.z } })
-  }
-
-
-  // RAF
-  useFrame(({ clock }) => {
-    // Material update
-    const a = clock.getElapsedTime()
-
+    // The plane must always follow the camera
     ref.current.lookAt(camera.position)
     refTarget.current.position.set(pointer.x, pointer.y, pointer.z)
 
-    // ref.current.material.uniforms.uTime.value = a
-    // ref.current.material.uniforms.uMouse.value = { x: pointerSpace.x,  y: pointerSpace.y}
-  })
-
+    useStore.setState({ pointerSpace: {x: pointer.x, y:pointer.y, z: pointer.z } })
+  }
 
   return (
     <group visible={true} >

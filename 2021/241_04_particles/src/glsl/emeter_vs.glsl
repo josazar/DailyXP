@@ -48,11 +48,8 @@ void main(){
     pos.y/=offSet.y;
     pos.z/=offSet.z;
   }
-  
   vPos=pos;
-  
   vec4 mvPosition=modelViewMatrix*vec4(pos,1.);
-  
   // Points Size
   gl_PointSize=.2*(30./-mvPosition.z);
   // gl_PointSize=2.;
