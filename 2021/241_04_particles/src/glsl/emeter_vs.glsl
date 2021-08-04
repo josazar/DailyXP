@@ -10,6 +10,7 @@ varying vec3 vPos;
 varying vec3 vCursorPos;
 varying vec2 vResolution;
 varying vec3 vColor;
+varying vec3 vOffset;
 
 attribute vec3 color;
 
@@ -39,14 +40,20 @@ void main(){
   
   vec3 pos=position;
   
-  vec3 offSet=vec3(distance(pos,vCursorPos))*1.5;
+  vec3 offSet=vec3(distance(pos,vCursorPos))*1.;
+  vOffset=offSet;
+  
   float diff=1.;
   
   // Mouse interaction
-  if(offSet.x<diff&&offSet.y<diff){
-    pos.x/=offSet.x;
-    pos.y/=offSet.y;
-    pos.z/=offSet.z;
+  if(offSet.x<diff){
+    // pos=mix(pos,vCursorPos,1.-vOffset);
+    
+    pos=mix(pos,vCursorPos,1.-vOffset);
+    
+    // pos.x/=offSet.x;
+    // pos.y/=offSet.y;
+    // pos.z/=offSet.z;
   }
   vPos=pos;
   vec4 mvPosition=modelViewMatrix*vec4(pos,1.);

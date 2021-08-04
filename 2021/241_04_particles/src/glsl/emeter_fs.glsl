@@ -1,8 +1,8 @@
-
 varying vec3 vCursorPos;
 varying vec3 vPos;
 varying vec2 vResolution;
 varying vec3 vColor;
+varying vec3 vOffset;
 
 float circle(in vec2 _st,in float _radius){
   vec2 dist=_st-vec2(.5);
@@ -18,11 +18,15 @@ void main(){
   vec3 col=vColor;
   col*=1.2;
   
-  vec3 colorA=vec3(.149,.141,.912);
+  vec3 colorA=vec3(1.,.7686,0.);
+  float diff=1.;
   
+  // Mouse interaction
+  if(vOffset.x<diff){
+    col=mix(col,colorA,1.-vOffset.x);
+  }
   // color circle
-  // col+=vec3(circle(vPos.xy-vMouse,.25));
-  
+  // col+=vec3(circle(vPos.xy-vCursorPos.xy,.25));
   // col+=vec3(vPos.x*.25,.0,.84);
   
   if(col.z>disc)discard;
