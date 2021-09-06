@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import useStore from '../store'
 
 export default class FBO {
 	constructor(width, height, renderer, simulationMaterial, renderMaterial) {
@@ -99,6 +100,8 @@ export default class FBO {
 
 		// Use the result of the swap as the new position for the particles' renderer
 		this.particles.material.uniforms.positions.value = this.rtt.texture
+		this.particles.material.uniforms.uCursorPos.value = useStore.getState().pointerSpace
+
 
 		this.simulationMaterial.uniforms.uTime.value = time
 	}

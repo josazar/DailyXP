@@ -32,7 +32,7 @@ function PlaneRayTracerTarget({ size }) {
 				<planeGeometry args={[20, 20, 1, 1]} />
 			</mesh>
 			<mesh ref={refTarget}>
-				<sphereGeometry args={[0.1, 8, 8]} />
+				<sphereGeometry args={[0.05, 8, 8]} />
 				<meshBasicMaterial
 					color="yellow"
 					// side={THREE.DoubleSide}

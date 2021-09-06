@@ -17,7 +17,7 @@ const FBOParticles = ({ renderer }) => {
 	useEffect(() => {
 		// width and height of FBO
 		const width = 256
-		const height = 128
+		const height = 256
 
 		// Populate a Float32Array of random positions
 		let length = width * height * 3
@@ -40,7 +40,7 @@ const FBOParticles = ({ renderer }) => {
 			uniforms: {
 				positions: { value: positions },
 				uTime: { value: 0 },
-				uSpeed: { value: 0.2 },
+				uSpeed: { value: 0.4 },
 				uCurlFreq: { value: 0.35 },
 			},
 		})
@@ -52,8 +52,8 @@ const FBOParticles = ({ renderer }) => {
 			fragmentShader: particlesFragment,
 			uniforms: {
 				positions: { value: null },
-				uTime: { value: 0 },
-				uPointSize: { value: 2.4 },
+				uCursorPos: { value: new THREE.Vector2(0, 0) },
+				uPointSize: { value: 1. },
 				uOpacity: { value: 0.35 },
 			},
 			transparent: true,
@@ -75,7 +75,7 @@ const FBOParticles = ({ renderer }) => {
 
 	return (
 		particles !== null && (
-			<primitive object={particles} position={[-2, 0, 0]}></primitive>
+			<primitive object={particles} position={[0, 0, 0]}></primitive>
 		)
 	)
 }

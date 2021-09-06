@@ -190,9 +190,9 @@ void main(){
   // you'll get very pleasing flocking particles
   // inside the bounds of a sphere
   curlPos+=curlNoise(curlPos*uCurlFreq*2.)*.5;
-  // curlPos+=curlNoise(curlPos*uCurlFreq*4.)*.25;
+  curlPos+=curlNoise(curlPos*uCurlFreq*4.)*.25;
   curlPos+=curlNoise(curlPos*uCurlFreq*8.)*.125;
-  // curlPos+=curlNoise(pos*uCurlFreq*16.)*.0625;
+  curlPos+=curlNoise(pos*uCurlFreq*16.)*.0625;
   
   finalPos=mix(pos,curlPos,cnoise(pos+t));
   

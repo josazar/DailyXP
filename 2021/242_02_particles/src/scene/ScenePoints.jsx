@@ -12,8 +12,8 @@ const ScenePoints = () => {
 
 	return (
 		<group>
-			<TreePoints bufferGeometry={treeGeometry} />
-			<TreePoints bufferGeometry={josephGeometry} />
+			{/* <TreePoints bufferGeometry={treeGeometry} />
+			<TreePoints bufferGeometry={josephGeometry} /> */}
 			<FBOParticles renderer={gl} />
 		</group>
 	)
