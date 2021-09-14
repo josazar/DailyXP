@@ -17,7 +17,7 @@ function App() {
 					<Suspense fallback={null}>
 						<ScenePoints />
 					</Suspense>
-					<OrbitControls dampingFactor={0.75} />
+					<OrbitControls dampingFactor={0.05} />
 				</Canvas>
 			</div>
 		</div>

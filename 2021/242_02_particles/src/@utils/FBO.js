@@ -2,12 +2,13 @@ import * as THREE from 'three'
 import useStore from '../store'
 
 export default class FBO {
-	constructor(width, height, renderer, simulationMaterial, renderMaterial) {
+	constructor(width, height, renderer, simulationMaterial, renderMaterial, bufferGeometry) {
 		this.width = width
 		this.height = height
 		this.renderer = renderer
 		this.simulationMaterial = simulationMaterial
 		this.renderMaterial = renderMaterial
+		this.bufferGeometry = bufferGeometry
 
 		this.gl = this.renderer.getContext()
 		this.init()
@@ -35,7 +36,7 @@ export default class FBO {
 		this.rtt = new THREE.WebGLRenderTarget(this.width, this.height, {
 			minFilter: THREE.NearestFilter, // Important because we want to sample square pixels
 			magFilter: THREE.NearestFilter,
-			format: THREE.RGBFormat, // Or RGBAFormat instead (to have a color for each particle, for example)
+			format: THREE.RGBAFormat, // Or RGBAFormat instead (to have a color for each particle, for example)
 			type: THREE.FloatType, // Important because we need precise coordinates (not ints)
 		})
 	}
@@ -74,21 +75,28 @@ export default class FBO {
 	}
 
 	createParticles() {
-		// Create a vertex buffer of size width * height with normalized coordinates
-		const length = this.width * this.height
-		let vertices = new Float32Array(length * 3)
-		for (let i = 0; i < length; i++) {
-			let i3 = i * 3
-			vertices[i3 + 0] = (i % this.width) / this.width
-			vertices[i3 + 1] = i / this.width / this.height
+
+		if (this.bufferGeometry) {
+			// The renderMaterial is used to render the particles
+			this.particles = new THREE.Points(this.bufferGeometry, this.renderMaterial)
+		} else {
+			// Create a vertex buffer of size width * height with normalized coordinates
+			const length = this.width * this.height
+			let vertices = new Float32Array(length * 3)
+	
+			for (let i = 0; i < length; i++) {
+				let i3 = i * 3
+				vertices[i3 + 0] = (i % this.width) / this.width
+				vertices[i3 + 1] = i / this.width / this.height
+			}
+	
+			// Create the particles geometry
+			const geometry = new THREE.BufferGeometry()
+			geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
+	
+			// The renderMaterial is used to render the particles
+			this.particles = new THREE.Points(geometry, this.renderMaterial)
 		}
-
-		// Create the particles geometry
-		const geometry = new THREE.BufferGeometry()
-		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-
-		// The renderMaterial is used to render the particles
-		this.particles = new THREE.Points(geometry, this.renderMaterial)
 	}
 
 	update(time) {
@@ -104,5 +112,6 @@ export default class FBO {
 
 
 		this.simulationMaterial.uniforms.uTime.value = time
+		this.simulationMaterial.uniforms.uCursorPos.value = useStore.getState().pointerSpace
 	}
 }

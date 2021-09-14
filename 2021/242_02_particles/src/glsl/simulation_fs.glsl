@@ -2,8 +2,10 @@ uniform sampler2D positions;// Data Texture containing original positions
 uniform float uTime;
 uniform float uSpeed;
 uniform float uCurlFreq;
+uniform vec3 uCursorPos;
 
 varying vec2 vUv;
+varying vec3 vGeometryPos;
 
 #define PI 3.1415926538
 
@@ -189,12 +191,21 @@ void main(){
   // if you uncomment the next noise additions
   // you'll get very pleasing flocking particles
   // inside the bounds of a sphere
-  curlPos+=curlNoise(curlPos*uCurlFreq*2.)*.5;
-  curlPos+=curlNoise(curlPos*uCurlFreq*4.)*.25;
+  // curlPos+=curlNoise(curlPos*uCurlFreq*2.)*.5;
+  // curlPos+=curlNoise(curlPos*uCurlFreq*4.)*.25;
   curlPos+=curlNoise(curlPos*uCurlFreq*8.)*.125;
   curlPos+=curlNoise(pos*uCurlFreq*16.)*.0625;
   
   finalPos=mix(pos,curlPos,cnoise(pos+t));
-  
+
+  float offSet = .25;
+
+  // Mouse Pos
+  if(distance(finalPos,uCursorPos) < .85) {
+    finalPos = mix(finalPos, uCursorPos, - 0.4 );
+  }
+
+  // finalPos = vGeometryPos;
+
   gl_FragColor=vec4(finalPos,1.);
 }

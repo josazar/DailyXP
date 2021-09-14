@@ -1,27 +1,38 @@
 import * as THREE from 'three'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import React, { useEffect, useState } from 'react'
+import { useFrame, useLoader } from '@react-three/fiber'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 
 import simVertex from '../glsl/simulation_vs.glsl?raw'
 import simFragment from '../glsl/simulation_fs.glsl?raw'
 import particlesVertex from '../glsl/particles_vs.glsl?raw'
 import particlesFragment from '../glsl/particles_fs.glsl?raw'
 
+import texturePng_1 from '../assets/textures/textureMatrix_02.png'
+import texturePng_2 from '../assets/textures/textureMatrix_03.png'
+import texturePng_3 from '../assets/textures/textureMatrix_05.png'
+
 import FBO from '../@utils/FBO'
 import { getSphere } from '../@utils'
 
 const FBOParticles = ({ renderer }) => {
+	const texture1 = useLoader(THREE.TextureLoader, texturePng_1)
+	const texture2 = useLoader(THREE.TextureLoader, texturePng_2)
+	const texture3 = useLoader(THREE.TextureLoader, texturePng_3)
+	// const josephGeometry = useLoader(PLYLoader, '/3D/JosephLow.ply')
+
 	const [particles, setParticles] = useState(null)
 	const [FBO_Object, setFBO_Object] = useState(null)
 
+
 	useEffect(() => {
 		// width and height of FBO
-		const width = 256
-		const height = 256
+		const width = 156
+		const height = 156
 
 		// Populate a Float32Array of random positions
 		let length = width * height * 3
-		let data = getSphere(length, 2)
+		let data = getSphere(length, 4)
 
 		// Convert the data to a FloatTexture
 		const positions = new THREE.DataTexture(
@@ -40,8 +51,9 @@ const FBOParticles = ({ renderer }) => {
 			uniforms: {
 				positions: { value: positions },
 				uTime: { value: 0 },
-				uSpeed: { value: 0.4 },
-				uCurlFreq: { value: 0.35 },
+				uSpeed: { value: 0.007 },
+				uCurlFreq: { value: .5 },
+				uCursorPos: { value: new THREE.Vector3(0,0,0)}
 			},
 		})
 
@@ -52,9 +64,12 @@ const FBOParticles = ({ renderer }) => {
 			fragmentShader: particlesFragment,
 			uniforms: {
 				positions: { value: null },
-				uCursorPos: { value: new THREE.Vector2(0, 0) },
-				uPointSize: { value: 1. },
-				uOpacity: { value: 0.35 },
+				texture1: { value: texture1 },
+				texture2: { value: texture2 },
+				texture3: { value: texture3 },
+				uCursorPos: { value: new THREE.Vector3(0, 0) },
+				uPointSize: { value: 20. },
+				uOpacity: { value: 0.75 },
 			},
 			transparent: true,
 			blending: THREE.AdditiveBlending,
@@ -75,7 +90,7 @@ const FBOParticles = ({ renderer }) => {
 
 	return (
 		particles !== null && (
-			<primitive object={particles} position={[0, 0, 0]}></primitive>
+			<primitive object={particles} position={[0, 0, 0]}  ></primitive>
 		)
 	)
 }
