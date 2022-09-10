@@ -49,16 +49,7 @@ const FBOParticles = ({ renderer }) => {
 		)
 		positions.needsUpdate = true
 
-		const colors = new THREE.DataTexture(
-			dataColor,
-			size,
-			size,
-			THREE.RGBFormat,
-			THREE.FloatType
-		)
-		colors.needsUpdate = true
 
-		
 
 	
 		// Simulation shader material used to update the particles' positions
@@ -80,11 +71,11 @@ const FBOParticles = ({ renderer }) => {
 			fragmentShader: particlesFragment,
 			uniforms: {
 				positions: { value: null },
-				// colors: { value: colors },
-				uPointSize: { value: 2.25 },
+				uPointSize: { value: 4.25 },
 			},
 			transparent: true,
 			// blending: THREE.AdditiveBlending,
+
 		})
 
 		// Initialize the FBO

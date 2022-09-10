@@ -35,7 +35,7 @@ export default class FBO {
 		this.rtt = new THREE.WebGLRenderTarget(this.width, this.height, {
 			minFilter: THREE.NearestFilter, // Important because we want to sample square pixels
 			magFilter: THREE.NearestFilter,
-			format: THREE.RGBAFormat, // Or RGBAFormat instead (to have a color for each particle, for example)
+			format: THREE.RGBFormat, // Or RGBAFormat instead (to have a color for each particle, for example)
 			type: THREE.FloatType, // Important because we need precise coordinates (not ints)
 		})
 	}

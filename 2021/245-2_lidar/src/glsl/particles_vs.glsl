@@ -11,10 +11,13 @@ attribute vec3 color;
 void main(){
   // the mesh is a normalized square so the uvs = the xy positions of the vertices
   vec3 pos=texture2D( positions, position.xy ).xyz;
+
   // pos now contains a 3D position in space, we can use it as a regular vertex
  
   // colors from texture
-  // vColor = texture2D( colors, position.xy ).rgb;
+  // vColor = texture2D( colors, position.xy ).xyz;
+
+
   vColor = color;
 
   float pointSize = uPointSize;
