@@ -4,40 +4,67 @@ export default /* glsl */ `
 uniform vec2 mousePos;
 uniform bool restart;
 
+// CONST
+vec3 ACC = vec3(.0, .0, .0);
+vec3 gravity = vec3(.0, -.5, .0);
+vec3 wind = vec3(.0, 1.0, .0);
 
+float mass = 100.;
+float bounciness = .99;
+
+// Level of the PLY object Floor
 float floor = -2.2;
-float acc = .0;
+
+
+// Newton Law:
+// MASS: M - FORCE: F - ACC: A 
+// F = M * A  Or A = F / M
+// ****************************************
+vec3 applyForce(vec3 force) {
+  vec3 f = force / mass;
+  ACC += f;
+
+  return ACC;
+}
 
 void main()	{
   vec2 uv = gl_FragCoord.xy / resolution.xy;
-  
-  vec3 mouse = vec3(mousePos.x, mousePos.y, 0.);
-
   vec3 selfVelocity = texture2D( textureVelocity, uv ).xyz;
-  vec3 selfPosition = texture2D( texturePosition, uv ).yyy;
+  vec3 selfPosition = texture2D( texturePosition, uv ).xyz;
   float dirUpdate = texture2D( textureVelocity, uv ).w;
-  float acceleration = texture2D( textureVelocity, uv ).x;
-
   vec3 velocity = selfVelocity;
 
-
-  
+ 
+  // EDGES SIMPLE FLOOR
+  // ************************
   if (selfPosition.y < floor) {
-    dirUpdate = -dirUpdate;
-    // acceleration -= .00001 ;
+    dirUpdate = -dirUpdate * bounciness;
   } 
-  
   velocity.y *= dirUpdate;
-    
-  // Apply Force
-  velocity.y += acceleration;
 
+  velocity.x *= bounciness * .98;
+  velocity.z *= bounciness * .99;
+
+
+  // Apply Forces
+  // ****************
+  ACC = applyForce( gravity );
+  
+  if ( restart == true) {
+    ACC = applyForce(wind);
+  }
 
   
-   if ( velocity.y < -.21 )  velocity.y = 0.;
+  // UDPATE
+  // ***********************
+  velocity += ACC;
+   
 
 
-  gl_FragColor = vec4( acceleration, velocity.y, 0. , dirUpdate);
+
+
+
+  gl_FragColor = vec4(velocity , dirUpdate);
 }
 
 

@@ -1,6 +1,8 @@
 export default /* glsl */ `
 #include <common>
 
+uniform bool restart;
+
 // uniform float timer;
 // uniform float frequency;
 // uniform float amplitude;
@@ -18,13 +20,13 @@ void main()	{
     vec3 velocity = texture2D( textureVelocity, uv ).xyz;
 
 
-    // Add Velocity
-    pos.y += velocity.y;
+    // UPDATE
+    pos += velocity;
 
       
-  if (pos.y <= floor) {
-    pos.y = floor -.005;
-  } 
+    if (pos.y <= floor) {
+        pos.y = floor -.005;
+    } 
 
     gl_FragColor = vec4( pos, 1. );
 }

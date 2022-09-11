@@ -136,7 +136,6 @@ export default class GPGPU {
     // this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
     // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
 
-    // velocity
     this.velocityVariable.material.uniforms["restart"] = { value: false };
 
     this.velocityVariable.wrapS = THREE.RepeatWrapping;
@@ -176,9 +175,13 @@ export default class GPGPU {
       const y = 0;
       const z =0;
 
-      theArray[k + 0] = -.0008  + Math.random() * .0001;
-      theArray[k + 1] = -.0008  //+ Math.random() * .0751;
-      theArray[k + 2] = 0;
+      
+      theArray[k + 0] = .25 * (Math.random() - .5);
+      theArray[k + 1] = -.1 + Math.random() * .05;     
+      theArray[k + 2] = .025 * (Math.random() - .5);
+
+
+      // Direction
       theArray[k + 3] = 1;
     }
   }
