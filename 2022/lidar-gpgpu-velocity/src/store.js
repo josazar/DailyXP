@@ -32,7 +32,6 @@ const useStore = create((set, get) => ({
         }, 500);
       },
       (error) => {
-        console.log(error);
       }
     );
   }

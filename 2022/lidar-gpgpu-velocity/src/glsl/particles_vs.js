@@ -2,7 +2,7 @@ export default /* glsl */ `
 
 uniform sampler2D texturePosition; //RenderTarget containing the transformed positions
 uniform sampler2D textureVelocity; //RenderTarget containing the transformed velocity
-uniform sampler2D colorTexture; //RenderTarget containing the transformed positions
+uniform sampler2D colorTexture;  //RenderTarget containing the transformed colors
 
 uniform float uPointSize;
 
@@ -19,7 +19,7 @@ void main(){
   
   vec3 velocity = normalize(texture2D( textureVelocity, reference ).xyz);
 
-  pos += velocity;
+  //pos += velocity;
 
 
   // regular projection of our position

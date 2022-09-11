@@ -25,7 +25,6 @@ function App() {
   };
 
   const onKeyUp = (e) => {
-    console.log("KeyDownds");
   };
 
   return (

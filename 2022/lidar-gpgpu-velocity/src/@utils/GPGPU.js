@@ -4,24 +4,58 @@ import fragmentSimulationPosition from "../glsl/fragmentSimulationPosition";
 import fragmentSimulationColor from "../glsl/fragmentSimulationColor";
 import fragmentSimulationVelocity from "../glsl/fragmentSimulationVelocity";
 
+/**
+ * USE of GPUComputationRenderer
+ * 
+ * GPUComputationRenderer, based on SimulationRenderer by zz85
+ * 
+The GPUComputationRenderer uses the concept of variables. These variables are RGBA float textures that hold 4 floats for each compute element (texel)
+Each variable has a fragment shader that defines the computation made to obtain the variable in question.
+
+You can use as many variables you need, and make dependencies so you can use textures of other variables in the shader 
+(the sampler uniforms are added automatically) 
+Most of the variables will need themselves as dependency.
+
+The renderer has actually two render targets per variable, to make ping-pong. 
+Textures from the current frame are used as inputs to render the textures of the next frame.
+The render targets of the variables can be used as input textures for your visualization shaders.
+Variable names should be valid identifiers and should not collide with THREE GLSL used identifiers.
+
+A common approach could be to use 'texture' prefixing the variable name; i.e texturePosition, textureVelocity...
+The size of the computation (sizeX * sizeY) is defined as 'resolution' automatically in the shader. For example:
+
+#DEFINE resolution vec2( 1024.0, 1024.0 )
+
+ */
+
+// Maybe check that too https://github.com/cabbibo/PhysicsRenderer
+
+// STUDIES
+
+/**
+ * oPosition original Texture
+ * position texture
+ * velocity  vel *= .99; // dampening
+ * acceleration
+ * life
+ * 
+ */
+
 export default class GPGPU {
   // initialPositions is not mandatory
   constructor(
-    width,
+    size,
     renderer,
     renderMaterial,
     initialPositions,
     initialColors
   ) {
     this.material = renderMaterial;
-    this.width = width;
+    this.width = size;
     this.renderer = renderer;
     this.initialPositions = initialPositions;
     this.initialColors = initialColors;
-    this.init();
-  }
 
-  init() {
     this.gpuCompute = new GPUComputationRenderer(
       this.width,
       this.width,
@@ -49,10 +83,6 @@ export default class GPGPU {
     );
     this.dtColor.needsUpdate = true;
 
-    // Texture Velocity
-    this.dtVelocity = this.gpuCompute.createTexture();
-    this.fillVelocityTexture(this.dtVelocity);
-
     // Simulation Shader for the Positions computing
     this.positionVariable = this.gpuCompute.addVariable(
       "texturePosition",
@@ -69,6 +99,10 @@ export default class GPGPU {
     );
 
     // Simulation Shader for the Velocity computing
+    // Texture Velocity
+    this.dtVelocity = this.gpuCompute.createTexture();
+    this.fillVelocityTexture(this.dtVelocity);
+
     this.velocityVariable = this.gpuCompute.addVariable(
       "textureVelocity",
       fragmentSimulationVelocity,
@@ -77,32 +111,30 @@ export default class GPGPU {
 
     // add uniform texturePosition Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.colorVariable, [
-      this.positionVariable,
       this.colorVariable,
-      this.velocityVariable
     ]);
     // add uniform textureColor Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.positionVariable, [
       this.positionVariable,
-      this.colorVariable,
       this.velocityVariable
     ]);
 
     // add uniform textureVelocity Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.velocityVariable, [
       this.positionVariable,
-      this.colorVariable,
       this.velocityVariable
     ]);
 
-    // Add Uniforms to the Positions simulation
+
+    // Add Uniforms 
     this.velocityVariable.material.uniforms["mousePos"] = {
       value: new THREE.Vector2(0, 0)
     };
-    this.positionVariable.material.uniforms["timer"] = { value: 0.1 };
-    this.positionVariable.material.uniforms["frequency"] = { value: 0.1 };
-    this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
-    this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
+
+    // this.positionVariable.material.uniforms["timer"] = { value: 0.1 };
+    // this.positionVariable.material.uniforms["frequency"] = { value: 0.1 };
+    // this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
+    // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
 
     // velocity
     this.velocityVariable.material.uniforms["restart"] = { value: false };
@@ -118,6 +150,9 @@ export default class GPGPU {
     ).texture;
   }
 
+
+
+
   update(time) {
     // Update positions
     this.material.uniforms.texturePosition.value = this.gpuCompute.getCurrentRenderTarget(
@@ -132,17 +167,18 @@ export default class GPGPU {
     this.gpuCompute.compute();
   }
 
+
   fillVelocityTexture(texture) {
     const theArray = texture.image.data;
 
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
-      const x = Math.random() - 0.5;
-      const y = Math.random() - 0.5;
-      const z = Math.random() - 0.5;
+      const x = 0;
+      const y = 0;
+      const z =0;
 
-      theArray[k + 0] = x * 1;
-      theArray[k + 1] = y * 1;
-      theArray[k + 2] = z * 1;
+      theArray[k + 0] = -.0008  + Math.random() * .0001;
+      theArray[k + 1] = -.0008  //+ Math.random() * .0751;
+      theArray[k + 2] = 0;
       theArray[k + 3] = 1;
     }
   }
