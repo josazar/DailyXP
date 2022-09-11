@@ -9,8 +9,9 @@ vec3 ACC = vec3(.0, .0, .0);
 vec3 gravity = vec3(.0, -.5, .0);
 vec3 wind = vec3(.0, 1.0, .0);
 
-float mass = 100.;
-float bounciness = .99;
+float mass = 75.;
+float bounciness = .97;
+float friction = .75;
 
 // Level of the PLY object Floor
 float floor = -2.2;
@@ -39,11 +40,14 @@ void main()	{
   // ************************
   if (selfPosition.y < floor) {
     dirUpdate = -dirUpdate * bounciness;
+
+    velocity.x *= bounciness * friction;
+    velocity.z *= bounciness * friction;
   } 
   velocity.y *= dirUpdate;
 
-  velocity.x *= bounciness * .98;
-  velocity.z *= bounciness * .99;
+  
+
 
 
   // Apply Forces
