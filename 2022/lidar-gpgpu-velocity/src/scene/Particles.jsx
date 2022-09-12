@@ -16,10 +16,10 @@ const renderMaterial = new THREE.ShaderMaterial({
     originalTexture: { value: null },
     textureVelocity: { value: null },
     colorTexture: { value: null },
-    uPointSize: { value: 10 }
+    uPointSize: { value: 17 }
   },
   transparent: true,
-  // blending : THREE.AdditiveBlending,
+  // blending : THREE.SubtractiveBlending,
 });
 
 const Particles = ({ renderer, PLYUrl }) => {
@@ -142,7 +142,7 @@ const Particles = ({ renderer, PLYUrl }) => {
   return (
     particles !== null && (
       <>
-        <group  position={[0,-.5,0]}>
+        <group  position={[0,-.49,0]}>
           <primitive object={particles} castShadow />
         </group>
       </>

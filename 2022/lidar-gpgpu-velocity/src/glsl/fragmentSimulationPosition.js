@@ -36,7 +36,7 @@ void main()	{
     } 
 
     // Life
-    life += 10. * restart;
+    life += 5. * restart;
 	if( life > 1400. ) life =  0.;
 
     gl_FragColor = vec4( pos, life );
