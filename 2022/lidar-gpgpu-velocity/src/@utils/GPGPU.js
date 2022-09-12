@@ -137,6 +137,7 @@ export default class GPGPU {
     // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
 
     this.velocityVariable.material.uniforms["restart"] = { value: false };
+    this.positionVariable.material.uniforms["restart"] = { value: false };
 
     this.velocityVariable.wrapS = THREE.RepeatWrapping;
     this.velocityVariable.wrapT = THREE.RepeatWrapping;

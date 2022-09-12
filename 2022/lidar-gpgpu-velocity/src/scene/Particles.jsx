@@ -37,11 +37,13 @@ const Particles = ({ renderer, PLYUrl }) => {
     const keydown = (event) => {
       if (event.code === "Space") {
         event.preventDefault();
-
-        // Reset Velocity
-        if (gpuCompute !== null)
-          gpuCompute.velocityVariable.material.uniforms["restart"].value = true;
+        if (gpuCompute !== null) {
+        
+          gpuCompute.velocityVariable.material.uniforms["restart"].value = 1;
+          gpuCompute.positionVariable.material.uniforms["restart"].value = 1;
+        }
       }
+      
     };
 
     const keyup = (event) => {
@@ -49,11 +51,19 @@ const Particles = ({ renderer, PLYUrl }) => {
         event.preventDefault();
 
         // Reset Velocity
-        if (gpuCompute !== null)
+        if (gpuCompute !== null) {
+
+          
           gpuCompute.velocityVariable.material.uniforms[
             "restart"
-          ].value = false;
+          ].value = 0;
+          gpuCompute.positionVariable.material.uniforms[
+            "restart"
+          ].value = 0;
+          
+        }
       }
+    
     };
 
     document.addEventListener("keydown", keydown);

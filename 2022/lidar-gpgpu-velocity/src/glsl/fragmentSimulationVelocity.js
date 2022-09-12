@@ -2,7 +2,7 @@ export default /* glsl */ `
 #include <common>
 
 uniform vec2 mousePos;
-uniform bool restart;
+uniform float restart;
 
 // CONST
 vec3 ACC = vec3(.0, .0, .0);
@@ -46,7 +46,7 @@ void main()	{
   } 
   velocity.y *= dirUpdate;
 
-  
+
 
 
 
@@ -54,19 +54,18 @@ void main()	{
   // ****************
   ACC = applyForce( gravity );
   
-  if ( restart == true) {
-    ACC = applyForce(wind);
+  if ( restart == 1.) {
+   // ACC = applyForce(wind);
   }
 
   
   // UDPATE
   // ***********************
+
+  ACC *= restart;
   velocity += ACC;
-   
 
-
-
-
+  
 
   gl_FragColor = vec4(velocity , dirUpdate);
 }

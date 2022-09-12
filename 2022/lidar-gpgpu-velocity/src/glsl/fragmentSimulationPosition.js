@@ -1,7 +1,7 @@
 export default /* glsl */ `
 #include <common>
 
-uniform bool restart;
+uniform float restart;
 
 // uniform float timer;
 // uniform float frequency;
@@ -20,9 +20,10 @@ void main()	{
     vec3 velocity = texture2D( textureVelocity, uv ).xyz;
 
 
-    // UPDATE
-    pos += velocity;
 
+    // UPDATE
+    pos += velocity * restart;
+    
       
     if (pos.y <= floor) {
         pos.y = floor -.005;
