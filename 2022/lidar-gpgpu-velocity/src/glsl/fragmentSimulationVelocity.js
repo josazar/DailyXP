@@ -3,6 +3,8 @@ export default /* glsl */ `
 
 uniform vec2 mousePos;
 uniform float restart;
+uniform sampler2D originalTexture;
+
 
 // CONST
 vec3 ACC = vec3(.0, .0, .0);
@@ -13,8 +15,11 @@ float mass = 75.;
 float bounciness = .97;
 float friction = .75;
 
+// SCENES OBJECTS
 // Level of the PLY object Floor
-float floor = -2.2;
+// ****************************************
+
+float floor = -1.74;
 
 
 // Newton Law:
@@ -24,26 +29,32 @@ float floor = -2.2;
 vec3 applyForce(vec3 force) {
   vec3 f = force / mass;
   ACC += f;
-
+  
   return ACC;
 }
 
 void main()	{
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec3 selfVelocity = texture2D( textureVelocity, uv ).xyz;
+  vec4 original = texture2D( originalTexture, uv );
   vec3 selfPosition = texture2D( texturePosition, uv ).xyz;
+  float life = texture2D( texturePosition, uv ).w;
   float dirUpdate = texture2D( textureVelocity, uv ).w;
+  
   vec3 velocity = selfVelocity;
 
- 
+
+
+
   // EDGES SIMPLE FLOOR
   // ************************
-  if (selfPosition.y < floor) {
+  if (selfPosition.y <= floor) {
     dirUpdate = -dirUpdate * bounciness;
-
     velocity.x *= bounciness * friction;
     velocity.z *= bounciness * friction;
+
   } 
+
   velocity.y *= dirUpdate;
 
 
@@ -53,10 +64,8 @@ void main()	{
   // Apply Forces
   // ****************
   ACC = applyForce( gravity );
-  
-  if ( restart == 1.) {
-   // ACC = applyForce(wind);
-  }
+
+  // ACC = applyForce(wind);
 
   
   // UDPATE
@@ -65,7 +74,12 @@ void main()	{
   ACC *= restart;
   velocity += ACC;
 
-  
+  // LIFE
+  if (life == 0.) {
+   velocity = original.xyz;
+   dirUpdate = 1.;
+  }
+
 
   gl_FragColor = vec4(velocity , dirUpdate);
 }

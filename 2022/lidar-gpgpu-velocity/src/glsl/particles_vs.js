@@ -8,6 +8,7 @@ uniform float uPointSize;
 
 varying vec2 vUv;
 varying vec3 vColor;
+varying float life;
 
 attribute vec2 reference;   // the xy positions of the vertices
 
@@ -15,15 +16,16 @@ void main(){
   // the mesh is a normalized square so the uvs = the xy positions of the vertices
   vUv = reference;
   vColor = texture( colorTexture, reference ).xyz;
-  vec3 pos = texture( texturePosition, reference ).xyz;
+  vec4 pos = texture( texturePosition, reference );
   
-  vec3 velocity = normalize(texture2D( textureVelocity, reference ).xyz);
+  // Life
+  life = 1. - ( pos.a / 1000. );
 
-  //pos += velocity;
+  if( pos.a == 0. ) life = 0.;
 
 
   // regular projection of our position
-  vec4 mvPosition = modelViewMatrix * vec4(pos,1.);
+  vec4 mvPosition = modelViewMatrix * vec4(pos.xyz,1.);
   
   gl_Position = projectionMatrix * mvPosition;
   gl_PointSize = uPointSize / -mvPosition.z  ;

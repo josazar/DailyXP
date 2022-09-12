@@ -13,11 +13,13 @@ const renderMaterial = new THREE.ShaderMaterial({
   fragmentShader: particlesFragment,
   uniforms: {
     texturePosition: { value: null },
+    originalTexture: { value: null },
     textureVelocity: { value: null },
     colorTexture: { value: null },
-    uPointSize: { value: 20 }
+    uPointSize: { value: 10 }
   },
-  transparent: true
+  transparent: true,
+  // blending : THREE.AdditiveBlending,
 });
 
 const Particles = ({ renderer, PLYUrl }) => {
@@ -86,11 +88,9 @@ const Particles = ({ renderer, PLYUrl }) => {
     for (var i = 0; i < size * size; i++) {
       // positions
       positions[i * 4] = activeGeometry.attributes.position.array[i * 3];
-      positions[i * 4 + 1] =
-        activeGeometry.attributes.position.array[i * 3 + 1];
-      positions[i * 4 + 2] =
-        activeGeometry.attributes.position.array[i * 3 + 2];
-        positions[i * 4 + 3] = 0
+      positions[i * 4 + 1] = activeGeometry.attributes.position.array[i * 3 + 1];
+      positions[i * 4 + 2] = activeGeometry.attributes.position.array[i * 3 + 2];
+      positions[i * 4 + 3] = Math.random() * 5; // Life
 
       // colors
       dataColor[i * 4] = activeGeometry.attributes.color.array[i * 3];
@@ -120,6 +120,8 @@ const Particles = ({ renderer, PLYUrl }) => {
     setParticles(particles);
   }, [activeGeometry, renderer]);
 
+
+
   // **************************************
   // LOOP
   // **************************************
@@ -128,10 +130,10 @@ const Particles = ({ renderer, PLYUrl }) => {
       const a = clock.getElapsedTime();
 
       // update Mouse
-      gpuCompute.velocityVariable.material.uniforms["mousePos"].value = {
-        x: (0.5 * mouseCoords.x) / window.innerWidth / 2,
-        y: (-0.5 * mouseCoords.y) / window.innerHeight / 2
-      };
+      // gpuCompute.velocityVariable.material.uniforms["mousePos"].value = {
+      //   x: (0.5 * mouseCoords.x) / window.innerWidth / 2,
+      //   y: (-0.5 * mouseCoords.y) / window.innerHeight / 2
+      // };
 
       gpuCompute.update(a);
     }
@@ -140,8 +142,8 @@ const Particles = ({ renderer, PLYUrl }) => {
   return (
     particles !== null && (
       <>
-        <group >
-          <primitive object={particles} position={[0, 0, 0]} castShadow></primitive>
+        <group  position={[0,-.5,0]}>
+          <primitive object={particles} castShadow />
         </group>
       </>
     )

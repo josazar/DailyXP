@@ -30,7 +30,14 @@ The size of the computation (sizeX * sizeY) is defined as 'resolution' automatic
 
 // Maybe check that too https://github.com/cabbibo/PhysicsRenderer
 
+// Also that is an inspiration: https://quentinlengele.com/index.php/2017/06/04/point-cloud-sandbox/
+// 
+// +https://dev.miaumiau.cat/curl_particles_collision/js/main.js
+// check shadowMapRT in that script
+// https://discourse.threejs.org/t/implement-your-own-shadow-mapping/13537
+//https://oimo.io/works
 // STUDIES
+// https://www.clicktorelease.com/code/THREE.FBOHelper/#512
 
 /**
  * oPosition original Texture
@@ -89,6 +96,8 @@ export default class GPGPU {
       fragmentSimulationPosition,
       this.dtPosition
     );
+    // original Texture
+
 
     // Simulation Shader for the Colors computing
     // at the moment not really computing... but we can
@@ -118,7 +127,6 @@ export default class GPGPU {
       this.positionVariable,
       this.velocityVariable
     ]);
-
     // add uniform textureVelocity Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.velocityVariable, [
       this.positionVariable,
@@ -127,22 +135,23 @@ export default class GPGPU {
 
 
     // Add Uniforms 
-    this.velocityVariable.material.uniforms["mousePos"] = {
-      value: new THREE.Vector2(0, 0)
-    };
+    this.velocityVariable.material.uniforms["restart"] = { value: 0 };
+    this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
+    // this.velocityVariable.material.uniforms["time"] = { value: 0. };
+    
+    this.positionVariable.material.uniforms["restart"] = { value: 0 };
+    this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
 
-    // this.positionVariable.material.uniforms["timer"] = { value: 0.1 };
+
+    // this.velocityVariable.material.uniforms["mousePos"] = {
+    //   value: new THREE.Vector2(0, 0)
+    // };
     // this.positionVariable.material.uniforms["frequency"] = { value: 0.1 };
     // this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
     // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
-
-    this.velocityVariable.material.uniforms["restart"] = { value: 0 };
-    this.positionVariable.material.uniforms["restart"] = { value: 0 };
-
-    this.velocityVariable.wrapS = THREE.RepeatWrapping;
-    this.velocityVariable.wrapT = THREE.RepeatWrapping;
-
     this.gpuCompute.init();
+
+
 
     // Color only once
     this.material.uniforms.colorTexture.value = this.gpuCompute.getCurrentRenderTarget(
@@ -173,9 +182,9 @@ export default class GPGPU {
 
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
       
-      theArray[k + 0] = .25 * (Math.random() - .5);
-      theArray[k + 1] = -.1 + Math.random() * .05;     
-      theArray[k + 2] = .025 * (Math.random() - .5);
+      theArray[k + 0] = .035 * (Math.random() - .5);
+      theArray[k + 1] = -.01 + Math.random() * .085;     
+      theArray[k + 2] = .035 * (Math.random() - .5);
 
 
       // Direction

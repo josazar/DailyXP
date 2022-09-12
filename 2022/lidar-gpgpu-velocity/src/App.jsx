@@ -52,12 +52,12 @@ function App() {
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.25, 0]} receiveShadow>
             <planeBufferGeometry attach="geometry" args={[200, 200]} />
             <shadowMaterial attach="material" transparent opacity={0.4} />
-          </mesh>
+          </mesh>    
 
           <Suspense fallback={null}>
             <ScenePoints />
           </Suspense>
-          <OrbitControls dampingFactor={0.05} />
+          <OrbitControls dampingFactor={0.25} />
         </Canvas>
       </div>
       <Stats showPanel={0} className="stats" />
