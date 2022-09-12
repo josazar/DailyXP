@@ -136,8 +136,8 @@ export default class GPGPU {
     // this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
     // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
 
-    this.velocityVariable.material.uniforms["restart"] = { value: false };
-    this.positionVariable.material.uniforms["restart"] = { value: false };
+    this.velocityVariable.material.uniforms["restart"] = { value: 0 };
+    this.positionVariable.material.uniforms["restart"] = { value: 0 };
 
     this.velocityVariable.wrapS = THREE.RepeatWrapping;
     this.velocityVariable.wrapT = THREE.RepeatWrapping;
@@ -172,10 +172,6 @@ export default class GPGPU {
     const theArray = texture.image.data;
 
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
-      const x = 0;
-      const y = 0;
-      const z =0;
-
       
       theArray[k + 0] = .25 * (Math.random() - .5);
       theArray[k + 1] = -.1 + Math.random() * .05;     

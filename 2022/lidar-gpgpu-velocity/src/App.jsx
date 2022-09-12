@@ -30,7 +30,30 @@ function App() {
   return (
     <div className="App" onPointerMove={onPointerMoveHandler} onKeyUp={onKeyUp}>
       <div id="canvas-container">
-        <Canvas>
+        <Canvas shadows>
+          <color attach="background" args={['#B4AA8A']} />
+
+          <ambientLight intensity={0.4} />
+
+          <directionalLight
+            castShadow
+            position={[2.5, 8, 5]}
+            intensity={1.5}
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+            shadow-camera-far={50}
+            shadow-camera-left={-10}
+            shadow-camera-right={10}
+            shadow-camera-top={10}
+            shadow-camera-bottom={-10}
+          />
+          <pointLight position={[0, -10, 0]} intensity={1.5} />
+      
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.25, 0]} receiveShadow>
+            <planeBufferGeometry attach="geometry" args={[200, 200]} />
+            <shadowMaterial attach="material" transparent opacity={0.4} />
+          </mesh>
+
           <Suspense fallback={null}>
             <ScenePoints />
           </Suspense>

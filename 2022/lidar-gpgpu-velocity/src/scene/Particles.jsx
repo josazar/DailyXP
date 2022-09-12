@@ -38,7 +38,6 @@ const Particles = ({ renderer, PLYUrl }) => {
       if (event.code === "Space") {
         event.preventDefault();
         if (gpuCompute !== null) {
-        
           gpuCompute.velocityVariable.material.uniforms["restart"].value = 1;
           gpuCompute.positionVariable.material.uniforms["restart"].value = 1;
         }
@@ -52,15 +51,12 @@ const Particles = ({ renderer, PLYUrl }) => {
 
         // Reset Velocity
         if (gpuCompute !== null) {
-
-          
-          gpuCompute.velocityVariable.material.uniforms[
-            "restart"
-          ].value = 0;
-          gpuCompute.positionVariable.material.uniforms[
-            "restart"
-          ].value = 0;
-          
+          // gpuCompute.velocityVariable.material.uniforms[
+          //   "restart"
+          // ].value = 0;
+          // gpuCompute.positionVariable.material.uniforms[
+          //   "restart"
+          // ].value = 0;
         }
       }
     
@@ -144,8 +140,8 @@ const Particles = ({ renderer, PLYUrl }) => {
   return (
     particles !== null && (
       <>
-        <group>
-          <primitive object={particles} position={[0, 0, 0]}></primitive>
+        <group >
+          <primitive object={particles} position={[0, 0, 0]} castShadow></primitive>
         </group>
       </>
     )
