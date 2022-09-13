@@ -39,6 +39,10 @@ The size of the computation (sizeX * sizeY) is defined as 'resolution' automatic
 // STUDIES
 // https://www.clicktorelease.com/code/THREE.FBOHelper/#512
 
+// For Shadows when vertex positions is modifyes use this:
+// https://threejs.org/docs/index.html?q=objec#api/en/core/Object3D.customDepthMaterial
+// https://qa.wujigu.com/qa/?qa=104886/three-js-how-to-update-shadows-in-modified-meshphysicalmaterial-shader
+
 /**
  * oPosition original Texture
  * position texture
@@ -55,9 +59,11 @@ export default class GPGPU {
     renderer,
     renderMaterial,
     initialPositions,
-    initialColors
+    initialColors,
+    depthMaterial,
   ) {
     this.material = renderMaterial;
+    this.depthMaterial = depthMaterial;
     this.width = size;
     this.renderer = renderer;
     this.initialPositions = initialPositions;
@@ -118,16 +124,14 @@ export default class GPGPU {
       this.dtVelocity
     );
 
-    // add uniform texturePosition Automaticaly to the Shader
+    // GPGPU Variables Dependencies
     this.gpuCompute.setVariableDependencies(this.colorVariable, [
       this.colorVariable,
     ]);
-    // add uniform textureColor Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.positionVariable, [
       this.positionVariable,
       this.velocityVariable
     ]);
-    // add uniform textureVelocity Automaticaly to the Shader
     this.gpuCompute.setVariableDependencies(this.velocityVariable, [
       this.positionVariable,
       this.velocityVariable
@@ -137,21 +141,11 @@ export default class GPGPU {
     // Add Uniforms 
     this.velocityVariable.material.uniforms["restart"] = { value: 0 };
     this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
-    // this.velocityVariable.material.uniforms["time"] = { value: 0. };
     
     this.positionVariable.material.uniforms["restart"] = { value: 0 };
     this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
 
-
-    // this.velocityVariable.material.uniforms["mousePos"] = {
-    //   value: new THREE.Vector2(0, 0)
-    // };
-    // this.positionVariable.material.uniforms["frequency"] = { value: 0.1 };
-    // this.positionVariable.material.uniforms["amplitude"] = { value: 55 };
-    // this.positionVariable.material.uniforms["maxDistance"] = { value: 65 };
     this.gpuCompute.init();
-
-
 
     // Color only once
     this.material.uniforms.colorTexture.value = this.gpuCompute.getCurrentRenderTarget(
@@ -164,14 +158,38 @@ export default class GPGPU {
 
   update(time) {
     // Update positions
-    this.material.uniforms.texturePosition.value = this.gpuCompute.getCurrentRenderTarget(
+    const posRT = this.gpuCompute.getCurrentRenderTarget(
       this.positionVariable
     ).texture;
+    this.material.uniforms.texturePosition.value = posRT;
 
     // Update velocity
     this.material.uniforms.textureVelocity.value = this.gpuCompute.getCurrentRenderTarget(
       this.velocityVariable
     ).texture;
+
+
+    // Depth Material Update
+    // *************************
+    this.depthMaterial.onBeforeCompile = shader => {
+      shader.uniforms.uPointSize = { value: 2.};
+      shader.uniforms.texturePosition = { value: posRT};
+      shader.vertexShader = `
+        uniform sampler2D texturePosition;
+        uniform float uPointSize;
+
+        attribute vec2 reference;
+        ${shader.vertexShader}
+      `.replace(
+        `#include <begin_vertex>`,
+        `#include <begin_vertex>
+        vec4 pos = texture( texturePosition, reference );
+
+        transformed = pos.xyz;
+        gl_PointSize = uPointSize;
+        `
+      );
+    }
 
     this.gpuCompute.compute();
   }
@@ -183,7 +201,7 @@ export default class GPGPU {
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
       
       theArray[k + 0] = .035 * (Math.random() - .5);
-      theArray[k + 1] = -.01 + Math.random() * .085;     
+      theArray[k + 1] = -.01 + Math.random() * .045;     
       theArray[k + 2] = .035 * (Math.random() - .5);
 
 

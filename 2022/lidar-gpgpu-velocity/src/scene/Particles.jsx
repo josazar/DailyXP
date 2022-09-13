@@ -8,18 +8,21 @@ import particlesFragment from "../glsl/particles_fs";
 import useStore from "../store";
 import { useFrame } from "@react-three/fiber";
 
+
+// Main Particules Material
 const renderMaterial = new THREE.ShaderMaterial({
   vertexShader: particlesVertex,
   fragmentShader: particlesFragment,
+
   uniforms: {
     texturePosition: { value: null },
     originalTexture: { value: null },
     textureVelocity: { value: null },
     colorTexture: { value: null },
-    uPointSize: { value: 17 }
+    uPointSize: { value: 20 }
   },
   transparent: true,
-  // blending : THREE.SubtractiveBlending,
+  // blending : THREE.MultiplyBlending,
 });
 
 const Particles = ({ renderer, PLYUrl }) => {
@@ -106,9 +109,19 @@ const Particles = ({ renderer, PLYUrl }) => {
       reference.set([xx, yy], i * 2);
     }
 
+
+    // Custom Depht Materila for Points Shadowing
+    // Shadow Custom 
+    const depthMaterial = new THREE.MeshDepthMaterial(
+      {
+        depthPacking: THREE.RGBADepthPacking,
+        alphaTest: 0.5,
+      }
+    )
+
     // GPGPU CLASS
     setGpuCompute(
-      new GPGPU(size, renderer, renderMaterial, positions, dataColor)
+      new GPGPU(size, renderer, renderMaterial, positions, dataColor, depthMaterial)
     );
 
     const geometry = new THREE.BufferGeometry();
@@ -117,6 +130,11 @@ const Particles = ({ renderer, PLYUrl }) => {
     geometry.setAttribute("reference", new THREE.BufferAttribute(reference, 2));
 
     let particles = new THREE.Points(geometry, renderMaterial);
+    
+
+   particles.customDepthMaterial = depthMaterial;
+
+
     setParticles(particles);
   }, [activeGeometry, renderer]);
 
@@ -135,7 +153,7 @@ const Particles = ({ renderer, PLYUrl }) => {
       //   y: (-0.5 * mouseCoords.y) / window.innerHeight / 2
       // };
 
-      gpuCompute.update(a);
+     gpuCompute.update(a);
     }
   });
 

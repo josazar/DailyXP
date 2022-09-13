@@ -1,6 +1,6 @@
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import "./App.css";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import ScenePoints from "./scene/ScenePoints";
 import { Toaster } from "react-hot-toast";
@@ -24,41 +24,23 @@ function App() {
     setMouseMove(true);
   };
 
-  const onKeyUp = (e) => {
-  };
 
   return (
-    <div className="App" onPointerMove={onPointerMoveHandler} onKeyUp={onKeyUp}>
+    <div className="App" onPointerMove={onPointerMoveHandler}>
       <div id="canvas-container">
         <Canvas shadows  legacy >
           
           <color attach="background" args={[0x787370]} />
 
-          <ambientLight intensity={0.4} />
-
-          <directionalLight
-            castShadow
-            position={[2.5, 8, 5]}
-            intensity={1.5}
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-            shadow-camera-far={50}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
-          />
-          {/* <pointLight position={[0, -10, 0]} intensity={1.5} /> */}
-      
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.25, 0]} receiveShadow>
             <planeBufferGeometry attach="geometry" args={[200, 200]} />
-            <shadowMaterial attach="material" transparent opacity={0.4} />
+            <shadowMaterial attach="material" transparent opacity={0.5} />
           </mesh>    
 
           <Suspense fallback={null}>
             <ScenePoints />
           </Suspense>
-          <OrbitControls dampingFactor={0.25} />
+          <OrbitControls dampingFactor={0.2} />
         </Canvas>
       </div>
       <Stats showPanel={0} className="stats" />

@@ -1,7 +1,6 @@
 export default /* glsl */ `
 
 uniform sampler2D texturePosition; //RenderTarget containing the transformed positions
-uniform sampler2D textureVelocity; //RenderTarget containing the transformed velocity
 uniform sampler2D colorTexture;  //RenderTarget containing the transformed colors
 
 uniform float uPointSize;
@@ -22,7 +21,6 @@ void main(){
   life = 1. - ( pos.a / 1000. );
 
   if( pos.a == 0. ) life = 0.;
-
 
   // regular projection of our position
   vec4 mvPosition = modelViewMatrix * vec4(pos.xyz,1.);
