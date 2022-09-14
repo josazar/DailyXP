@@ -1,25 +1,25 @@
 export default /* glsl */ `
 #include <common>
 
-uniform vec2 mousePos;
+uniform vec4 spherePos;
 uniform float restart;
 uniform sampler2D originalTexture;
 
 
 // CONST
 vec3 ACC = vec3(.0, .0, .0);
-vec3 gravity = vec3(.0, -.5, .0);
-vec3 wind = vec3(.0, 1.0, .0);
+vec3 gravity = vec3(.0, -.1, .0);
+vec3 wind = vec3(-.05, .02, .05);
 
-float mass = 75.;
-float bounciness = .97;
-float friction = .75;
+float mass = 65.;
+float bounciness = .98;
+float friction = .8;
 
 // SCENES OBJECTS
 // Level of the PLY object Floor
 // ****************************************
 
-float floor = -1.74;
+float floor = -2.12;
 
 
 // Newton Law:
@@ -42,7 +42,7 @@ void main()	{
   float dirUpdate = texture2D( textureVelocity, uv ).w;
   
   vec3 velocity = selfVelocity;
-
+  float GO = restart;
 
 
 
@@ -63,15 +63,27 @@ void main()	{
 
   // Apply Forces
   // ****************
+  
+  // Collision
+  float r = spherePos.a;
+  vec3 pp = spherePos.xyz - selfPosition.xyz;
+  float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
+
+  if (d > r) {
+    GO = 1.;
+    // ACC = applyForce(wind);
+  }
+  
+  if (selfVelocity != original.xyz  ) {
+    GO = 1.;
+}
+
   ACC = applyForce( gravity );
-
-  // ACC = applyForce(wind);
-
   
   // UDPATE
   // ***********************
 
-  ACC *= restart;
+  ACC *= GO;
   velocity += ACC;
 
   // LIFE

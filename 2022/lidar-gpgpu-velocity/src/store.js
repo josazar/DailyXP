@@ -4,17 +4,18 @@ import toast from "react-hot-toast";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 
 const useStore = create((set, get) => ({
+  // States
   mouseMoved: false,
   mouseCoords: new Vector2(),
   activeGeometry: null,
 
+  // Actions
   setMouseMove: (bool) => {
     set({ mouseMoved: bool });
   },
   setMouseCoords: ({ x, y }) => {
     get().mouseCoords.set(x, y);
   },
-
   loadPlyFile: (url) => {
     const loader = new PLYLoader();
 

@@ -3,6 +3,7 @@ import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRe
 import fragmentSimulationPosition from "../glsl/fragmentSimulationPosition";
 import fragmentSimulationColor from "../glsl/fragmentSimulationColor";
 import fragmentSimulationVelocity from "../glsl/fragmentSimulationVelocity";
+import { Vector4 } from "three";
 
 /**
  * USE of GPUComputationRenderer
@@ -141,9 +142,12 @@ export default class GPGPU {
     // Add Uniforms 
     this.velocityVariable.material.uniforms["restart"] = { value: 0 };
     this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
+    this.velocityVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
     
     this.positionVariable.material.uniforms["restart"] = { value: 0 };
     this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
+    this.positionVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
+
 
     this.gpuCompute.init();
 
@@ -172,7 +176,7 @@ export default class GPGPU {
     // Depth Material Update
     // *************************
     this.depthMaterial.onBeforeCompile = shader => {
-      shader.uniforms.uPointSize = { value: 2.};
+      shader.uniforms.uPointSize = { value: 1.};
       shader.uniforms.texturePosition = { value: posRT};
       shader.vertexShader = `
         uniform sampler2D texturePosition;

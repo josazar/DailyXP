@@ -16,6 +16,6 @@ void main(){
   // gl_FragColor = vec4(vColor, 1.0 - depth);
   // Check that https://github.com/mrdoob/three.js/issues/13749
 
-  gl_FragColor = vec4(col, life * .7);
+  gl_FragColor = vec4(col, life * .75);
 }
 `;

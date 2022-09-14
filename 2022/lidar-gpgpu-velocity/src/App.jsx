@@ -28,14 +28,10 @@ function App() {
   return (
     <div className="App" onPointerMove={onPointerMoveHandler}>
       <div id="canvas-container">
-        <Canvas shadows  legacy >
-          
-          <color attach="background" args={[0x787370]} />
+        <Canvas shadows  legacy >          
 
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.25, 0]} receiveShadow>
-            <planeBufferGeometry attach="geometry" args={[200, 200]} />
-            <shadowMaterial attach="material" transparent opacity={0.5} />
-          </mesh>    
+          <color attach="background" args={[0xb09e9c]} />
+
 
           <Suspense fallback={null}>
             <ScenePoints />

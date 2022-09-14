@@ -1,12 +1,15 @@
 // Particules test with GPUComputationRenderer
 import * as THREE from "three";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import GPGPU from "../@utils/GPGPU";
 
 import particlesVertex from "../glsl/particles_vs";
 import particlesFragment from "../glsl/particles_fs";
 import useStore from "../store";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { calcPosFromAngles, Plane, Sphere } from "@react-three/drei";
+
+
 
 
 // Main Particules Material
@@ -19,7 +22,7 @@ const renderMaterial = new THREE.ShaderMaterial({
     originalTexture: { value: null },
     textureVelocity: { value: null },
     colorTexture: { value: null },
-    uPointSize: { value: 20 }
+    uPointSize: { value: 15 }
   },
   transparent: true,
   // blending : THREE.MultiplyBlending,
@@ -33,11 +36,15 @@ const Particles = ({ renderer, PLYUrl }) => {
   const mouseCoords = useStore((state) => state.mouseCoords);
   //  const [helper] = useState(new FBOHelper(renderer));
   const [size, setSize] = useState(null);
+  const planeProjection = useRef();
+  const mouseSphere = useRef();
+  const { camera } = useThree()
 
   useEffect(() => {
     loadPlyFile(PLYUrl);
   }, [loadPlyFile, PLYUrl]);
 
+  // Events
   useEffect(() => {
     const keydown = (event) => {
       if (event.code === "Space") {
@@ -47,32 +54,12 @@ const Particles = ({ renderer, PLYUrl }) => {
           gpuCompute.positionVariable.material.uniforms["restart"].value = 1;
         }
       }
-      
-    };
-
-    const keyup = (event) => {
-      if (event.code === "Space") {
-        event.preventDefault();
-
-        // Reset Velocity
-        if (gpuCompute !== null) {
-          // gpuCompute.velocityVariable.material.uniforms[
-          //   "restart"
-          // ].value = 0;
-          // gpuCompute.positionVariable.material.uniforms[
-          //   "restart"
-          // ].value = 0;
-        }
-      }
-    
     };
 
     document.addEventListener("keydown", keydown);
-    document.addEventListener("keyup", keyup);
 
     return () => {
       document.removeEventListener("keydown", keydown);
-      document.removeEventListener("keyup", keyup);
     };
   }, [gpuCompute]);
 
@@ -139,6 +126,11 @@ const Particles = ({ renderer, PLYUrl }) => {
   }, [activeGeometry, renderer]);
 
 
+  // PlaneProjection
+  
+
+
+
 
   // **************************************
   // LOOP
@@ -147,11 +139,23 @@ const Particles = ({ renderer, PLYUrl }) => {
     if (particles !== null && gpuCompute !== null) {
       const a = clock.getElapsedTime();
 
-      // update Mouse
-      // gpuCompute.velocityVariable.material.uniforms["mousePos"].value = {
-      //   x: (0.5 * mouseCoords.x) / window.innerWidth / 2,
-      //   y: (-0.5 * mouseCoords.y) / window.innerHeight / 2
-      // };
+      // update Sphere Coord in Material
+      gpuCompute.velocityVariable.material.uniforms["spherePos"].value = {
+        x: mouseSphere.current.position.x,
+        y: mouseSphere.current.position.y,
+        z: mouseSphere.current.position.z,
+        w: .1 // Radius
+      };
+
+      gpuCompute.positionVariable.material.uniforms["spherePos"].value = {
+        x: mouseSphere.current.position.x,
+        y: mouseSphere.current.position.y,
+        z: mouseSphere.current.position.z,
+        w: .1 // Radius
+      };
+      
+      // Plane Projection 
+      planeProjection.current.lookAt(camera.position);
 
      gpuCompute.update(a);
     }
@@ -160,7 +164,25 @@ const Particles = ({ renderer, PLYUrl }) => {
   return (
     particles !== null && (
       <>
-        <group  position={[0,-.49,0]}>
+        <group  position={[0,-0.,0]}>
+          <Sphere 
+            ref={mouseSphere}
+            args={[.25,12,12]}
+            
+          />
+          <Plane 
+            ref={planeProjection} 
+            args={[20,20,20]} 
+            position={[0,0,0]} 
+            visible={false} 
+            onPointerMove={
+              (e) => {
+                mouseSphere.current.position.set(e.point.x, e.point.y, e.point.z) 
+              }
+            }
+          />
+
+
           <primitive object={particles} castShadow />
         </group>
       </>
