@@ -27,7 +27,7 @@ const ScenePoints = () => {
       </mesh>
 
 
-      <Particles renderer={gl} PLYUrl="/3D/AlleeCouverteCarnac01.ply" />
+      <Particles renderer={gl} PLYUrl="/3D/AlleeCouverteCarnac.ply" />
     </group>
   );
 };
