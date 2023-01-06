@@ -10,6 +10,7 @@ const Scene = () => {
 		}
 
         const editor = new Editor(canvas.current!);
+
     }, [canvas])
 
     return (<>
