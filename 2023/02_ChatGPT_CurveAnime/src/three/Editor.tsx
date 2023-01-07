@@ -44,21 +44,6 @@ export class Editor {
     }
 
     init() {
-        // Set up the curves and add them to the scene
-        // var curves: Line<BufferGeometry, LineBasicMaterial>[] = [];
-        // for (var i = 0; i < 25; i++) {
-        //     var points = [    
-        //         new Vector3( -20, 0, i * 2 ),   
-        //         new Vector3( -10, 15, i * 3 ),    
-        //         new Vector3( 20, 0, i * 4 ),   
-        //         new Vector3( 20, 10, i * 5 )  
-        //     ];
-        //     var curve = this.drawSplineCurve(points);
-        //     this.scene.add(curve);
-        //     curves.push(curve);
-        // }
-
-
         // Set up the control points for the curves
         var points1 = [
             new Vector3( -10, 0, 0 ),
@@ -69,20 +54,20 @@ export class Editor {
         var points2 = [
             new Vector3( 5, 5, 0 ),
             new Vector3( 10, 0, 0 ),
-            new Vector3( 5, -5, 0 ),
+            new Vector3( 7, -5, 0 ),
             new Vector3( 0, -7, 0 )
         ];
         var points3 = [
             new Vector3( 0, -7, 0 ),
-            new Vector3( -5, -5, 0 ),
+            new Vector3( -7, -5, 0 ),
             new Vector3( -10, 0, 0 ),
             new Vector3( -5, 5, 0 )
         ];
         var points4 = [
             new Vector3( -5, 5, 0 ),
-            new Vector3( 0, 10, 0 ),
-            new Vector3( 5, 5, 0 ),
-            new Vector3( 0, 0, 0 )
+            new Vector3( -3, 10, 0 ),
+            new Vector3( 3, 10, 0 ),
+            new Vector3( 5, 5, 0 )
         ];
         
         // Create the curves
@@ -90,6 +75,12 @@ export class Editor {
         var curve2 = this.drawSplineCurve(points2);
         var curve3 = this.drawSplineCurve(points3);
         var curve4 = this.drawSplineCurve(points4);
+
+        const curves: Line<BufferGeometry, LineBasicMaterial>[] = [];
+        curves.push(curve1)
+        curves.push(curve2)
+        curves.push(curve3)
+        curves.push(curve4)
         
         // Add the curves to the scene
         this.scene.add(curve1);
@@ -101,7 +92,15 @@ export class Editor {
         // RAF
         const animate =  () => {
             requestAnimationFrame(animate);
-
+            // Update the position of the control points for each curve
+            for (var i = 0; i < 4; i++) {
+                var curve = this.scene.children[i] as Line<BufferGeometry, LineBasicMaterial>;
+                var position = curve.geometry.attributes.position;
+                for (var j = 0; j < position.count; j += 3) {
+                    position.setXYZ(j, position.getX(j), Math.sin(Date.now() * 0.002 + j), position.getZ(j));
+                }
+                position.needsUpdate = true;
+              }
 
             this.renderer.render(this.scene, this.camera);
         };
@@ -123,6 +122,7 @@ export class Editor {
         
         // Create a buffer geometry to hold the curve points
         var curveGeometry = new BufferGeometry().setFromPoints(curvePoints);
+        
         
         // Create a material and a line from the geometry
         var curveMaterial = new LineBasicMaterial({ color: 0xffff00, linewidth: 50 });
