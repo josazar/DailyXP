@@ -1,0 +1,15 @@
+#root {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+.App {
+  height: 100%;
+  width: 100%;
+}
+#canvas3d {
+  width: 100%;
+  height: 100%;
+
+  background-color: #000000;
+}
