@@ -1,7 +1,7 @@
 export default /* glsl */ `
 
 uniform sampler2D texturePosition; //RenderTarget containing the transformed positions
-uniform sampler2D colorTexture;  //RenderTarget containing the transformed colors
+uniform sampler2D textureColor;  //RenderTarget containing the transformed colors
 
 uniform float uPointSize;
 
@@ -14,7 +14,7 @@ attribute vec2 reference;   // the xy positions of the vertices
 void main(){
   // the mesh is a normalized square so the uvs = the xy positions of the vertices
   vUv = reference;
-  vColor = texture( colorTexture, reference ).xyz;
+  vColor = texture( textureColor, reference ).xyz;
   vec4 pos = texture( texturePosition, reference );
   
   // Life

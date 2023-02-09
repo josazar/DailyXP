@@ -1,5 +1,47 @@
 import * as THREE from "three"
 
+const getAttributesFromGeometryLidar = (geometry) => {
+   // Positions from Geometry LIDAR
+   var total = geometry.attributes.position.count;
+   var size = parseInt(Math.sqrt(total));
+   var positions = new Float32Array(size * size * 4);
+   var colors = new Float32Array(size * size * 4);
+   var reference = new Float32Array(size * size * 2);
+
+   for (var i = 0; i < size * size; i++) {
+     const posAttr = geometry.attributes.position
+     const colorAttr = geometry.attributes.color
+
+     // positions
+     positions[i * 4] = posAttr.array[i * 3];
+     positions[i * 4 + 1] = posAttr.array[i * 3 + 1];
+     positions[i * 4 + 2] = posAttr.array[i * 3 + 2];
+     positions[i * 4 + 3] = Math.random() * 5; // Life
+
+     // colors
+     colors[i * 4] = colorAttr.array[i * 3];
+     colors[i * 4 + 1] = colorAttr.array[i * 3 + 1];
+     colors[i * 4 + 2] = colorAttr.array[i * 3 + 2];
+     colors[i * 4 + 3] = 0;
+
+     // reference to easily get the xy positions of the vertices
+     // Lidar Color can now be well be sort on Windows and Linux Machine
+     // Found the solution via https://www.youtube.com/watch?v=oLH00MXTqNg
+     let xx = (i % size) / size;
+     let yy = ~~(i / size) / size; 
+     reference.set([xx, yy], i * 2);
+   }
+
+  return {
+    positions,
+    colors, 
+    reference,
+    size
+  }
+}
+
+
+
 /**
  * Generate Points from a texture - Image 2D
  * @param {*} img
@@ -219,4 +261,5 @@ export {
   generatePointsFromFormula,
   getColorDatasFromTexture,
   generateFacePosition,
+  getAttributesFromGeometryLidar
 }

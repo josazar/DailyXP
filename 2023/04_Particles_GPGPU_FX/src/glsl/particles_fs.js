@@ -7,9 +7,7 @@ void main(){
   vec3 col= vec3(vColor.rgb);
   vec2 cxy = 2. * gl_PointCoord - 1.0;
 
-
   if (dot(cxy, cxy) > 1.0) discard;
-
 
   // TODO 
   // float depth = gl_FragCoord.z;

@@ -29,8 +29,7 @@ void main()	{
 	}
 
 
-    // COLLISION
-    
+    // COLLISION    
     float r = spherePos.a;
     vec3 pp = spherePos.xyz - pos.xyz;
     float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;

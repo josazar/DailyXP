@@ -53,36 +53,29 @@ The size of the computation (sizeX * sizeY) is defined as 'resolution' automatic
  * 
  */
 
-export default class GPGPU {
-  // initialPositions is not mandatory
+export default class ParticlesSimulator {
   constructor(
     size,
     renderer,
     renderMaterial,
-    initialPositions,
-    initialColors,
-    depthMaterial,
+    positions,
+    colors,
     simSettings
   ) {
     this.material = renderMaterial;
-    this.depthMaterial = depthMaterial;
-    this.width = size;
-    this.renderer = renderer;
-    this.initialPositions = initialPositions;
-    this.initialColors = initialColors;
 
     this.gpuCompute = new GPUComputationRenderer(
-      this.width,
-      this.width,
-      this.renderer
+      size,
+      size,
+      renderer
     );
 
     // Convert the data to a FloatTexture
     // Texture Position
     this.dtPosition = new THREE.DataTexture(
-      this.initialPositions,
-      this.width,
-      this.width,
+      positions,
+      size,
+      size,
       THREE.RGBAFormat,
       THREE.FloatType
     );
@@ -90,9 +83,9 @@ export default class GPGPU {
 
     // Texture Color
     this.dtColor = new THREE.DataTexture(
-      this.initialColors,
-      this.width,
-      this.width,
+      colors,
+      size,
+      size,
       THREE.RGBAFormat,
       THREE.FloatType
     );
@@ -151,53 +144,22 @@ export default class GPGPU {
     this.positionVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
     this.positionVariable.material.uniforms["floor"] = { value:  simSettings.floor };
 
-
     this.gpuCompute.init();
 
     // Color only once
-    this.material.uniforms.colorTexture.value = this.gpuCompute.getCurrentRenderTarget(
+    this.material.uniforms.textureColor.value = this.gpuCompute.getCurrentRenderTarget(
       this.colorVariable
     ).texture;
   }
-
-
-
 
   update(time) {
     // Update positions
     const posRT = this.gpuCompute.getCurrentRenderTarget(
       this.positionVariable
     ).texture;
+    
     this.material.uniforms.texturePosition.value = posRT;
-
-    // Update velocity
-    this.material.uniforms.textureVelocity.value = this.gpuCompute.getCurrentRenderTarget(
-      this.velocityVariable
-    ).texture;
-
-
-    // Depth Material Update
-    // *************************
-    this.depthMaterial.onBeforeCompile = shader => {
-      shader.uniforms.uPointSize = { value: 1.};
-      shader.uniforms.texturePosition = { value: posRT};
-      shader.vertexShader = `
-        uniform sampler2D texturePosition;
-        uniform float uPointSize;
-
-        attribute vec2 reference;
-        ${shader.vertexShader}
-      `.replace(
-        `#include <begin_vertex>`,
-        `#include <begin_vertex>
-        vec4 pos = texture( texturePosition, reference );
-
-        transformed = pos.xyz;
-        gl_PointSize = uPointSize;
-        `
-      );
-    }
-
+    
     this.gpuCompute.compute();
   }
 
