@@ -1,13 +1,12 @@
 // Particules test with GPUComputationRenderer
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useMemo, Suspense } from "react";
 import ParticlesSimulator from "./ParticlesSimulator";
 import particlesVertex from "../glsl/particles_vs";
 import particlesFragment from "../glsl/particles_fs";
-import useStore from "../store";
-import { useFrame, useThree, extend } from "@react-three/fiber";
-import { Points, ShaderMaterial } from "three";
+import { useFrame, useThree, useLoader} from "@react-three/fiber";
+import { ShaderMaterial } from "three";
 import {getAttributesFromGeometryLidar} from '../@utils/CloudPoints.js';
-import { useTexture, shaderMaterial } from "@react-three/drei";
+import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 
 // Main Particules Material
 const renderMaterial = new ShaderMaterial({
@@ -22,38 +21,15 @@ const renderMaterial = new ShaderMaterial({
   transparent: true,
 });
 
-// export const ParticlesMaterial = shaderMaterial(
-//   {
-//     texturePosition: null,
-//     textureColor: null,
-//     uPointSize: 14 * window.devicePixelRatio
-//   },
-//   // Vertex
-//   particlesVertex
-//   ,
-//   // Fragment
-//   particlesFragment
-// )
-
-// extend({ ParticlesMaterial })
-
-
-
-const simSettings = {
-  "floor": -1.4
-}
-
 export default function Particles({ PLYUrl } : {PLYUrl: string}) {
   const { gl } = useThree();
-  const loadPlyFile = useStore((state) => state.loadPlyFile);
-  const activeGeometry = useStore((state) => state.activeGeometry);
-  const materialRef = useRef<ShaderMaterial>();
+
+  const activeGeometry = useLoader(PLYLoader, PLYUrl)
+  // You don't need to check for the presence of the result, when we're here
+  // the result is guaranteed to be present since useLoader suspends the component
+  // activeGeometry.center();
 
   const geometryData = useMemo(() => { 
-    if (!activeGeometry) return
-
-      materialRef.current = renderMaterial;
-
       return getAttributesFromGeometryLidar(activeGeometry)
   }, [activeGeometry])
 
@@ -67,17 +43,11 @@ export default function Particles({ PLYUrl } : {PLYUrl: string}) {
         gl, 
         renderMaterial, 
         geometryData.positions, 
-        geometryData.colors, 
-        simSettings
+        geometryData.colors
       );
   }, [geometryData])
 
-
-  useEffect(() => {
-    loadPlyFile(PLYUrl);
-  }, [loadPlyFile, PLYUrl]);
-
-  // KEY PRESS
+  // EVENTS KEY PRESS
   useEffect(() => {
     const keydown = (event) => {
       if (event.code === "Space") {
@@ -88,9 +58,7 @@ export default function Particles({ PLYUrl } : {PLYUrl: string}) {
         }
       }
     };
-
     document.addEventListener("keydown", keydown);
-
     return () => {
       document.removeEventListener("keydown", keydown);
     };
@@ -105,20 +73,23 @@ export default function Particles({ PLYUrl } : {PLYUrl: string}) {
       const a = clock.getElapsedTime();
 
       simulator.update(a);
+
+      // Update Floor
+      simulator.positionVariable.material.uniforms.floor.value = -1.5;
+      simulator.velocityVariable.material.uniforms.floor.value = -1.5;
     }
   });
 
-  if (!geometryData) return;
-
   return (
-    <points position={[0,.15,0]} rotation={[0,0,0]} material={renderMaterial}>
-      <bufferGeometry >
-        <bufferAttribute attach="attributes-position" count={geometryData.positions.length / 4} array={geometryData.positions} itemSize={4} />
-        <bufferAttribute attach="attributes-reference" count={geometryData.reference.length / 2} array={geometryData.reference} itemSize={2} />
-      </bufferGeometry>
-    </points>
+    <Suspense>
+      <points position={[0,0.15,0]} rotation={[0,0,0]} material={renderMaterial} scale={[1,1,1]}> 
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" count={geometryData.positions.length / 4} array={geometryData.positions} itemSize={4} />
+          <bufferAttribute attach="attributes-reference" count={geometryData.reference.length / 2} array={geometryData.reference} itemSize={2} />
+        </bufferGeometry>
+      </points>
+
+      {/*  Floor */}
+    </Suspense>
   );
 };
-
-
-

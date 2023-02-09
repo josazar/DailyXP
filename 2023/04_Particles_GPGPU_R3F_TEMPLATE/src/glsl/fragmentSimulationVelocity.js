@@ -9,14 +9,11 @@ uniform float floor;
 
 // CONST
 vec3 ACC = vec3(.0, .0, .0);
-vec3 gravity = vec3(.0, -.1, .0);
+vec3 gravity = vec3(.0, -.2, .0);
 vec3 wind = vec3(-.05, .02, .05);
-
 float mass = 65.;
 float bounciness = .98;
 float friction = .8;
-
-
 
 
 // Newton Law:
@@ -49,31 +46,30 @@ void main()	{
     dirUpdate = -dirUpdate * bounciness;
     velocity.x *= bounciness * friction;
     velocity.z *= bounciness * friction;
-
   } 
 
   velocity.y *= dirUpdate;
-
-
-
 
 
   // Apply Forces
   // ****************
   
   // Collision
-  float r = spherePos.a;
-  vec3 pp = spherePos.xyz - selfPosition.xyz;
-  float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
+  // ********************************
+  // float r = spherePos.a;
+  // vec3 pp = spherePos.xyz - selfPosition.xyz;
+  // float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
 
-  if (d > r) {
-    GO = 1.;
-    // ACC = applyForce(wind);
-  }
+  // if (d > r) {
+  //   GO = 1.;
+  //   ACC = applyForce(wind);
+  // }
+  // End Collision
   
+
   if (selfVelocity != original.xyz  ) {
     GO = 1.;
-}
+  }
 
   ACC = applyForce( gravity );
   

@@ -13,9 +13,7 @@ function App() {
       <div id="canvas-container">
         <Canvas shadows legacy>          
           <color attach="background" args={[0x8F7991]} />
-          <Suspense fallback={null}>
-            <Particles PLYUrl="/3D/AlleeCouverteCarnac.ply"/>
-          </Suspense>
+          <Particles PLYUrl="/3D/AlleeCouverteCarnac.ply"/>
           <OrbitControls dampingFactor={0.8} />
         </Canvas>
       </div>

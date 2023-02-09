@@ -2,6 +2,7 @@ export default /* glsl */ `
 #include <common>
 
 uniform float restart;
+uniform float lifeDuration;
 uniform sampler2D originalTexture;
 uniform vec4 spherePos;
 
@@ -30,13 +31,17 @@ void main()	{
 
 
     // COLLISION    
-    float r = spherePos.a;
-    vec3 pp = spherePos.xyz - pos.xyz;
-    float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
+    // float r = spherePos.a;
+    // vec3 pp = spherePos.xyz - pos.xyz;
+    // float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
 
-    if (d > r) {
-        GO = 1.;
-    }
+    // if (d > r) {
+    //     GO = 1.;
+    // }
+
+    // END COLLISION
+
+
 
     if (pos != original.xyz  ) {
         GO = 1.;
@@ -56,7 +61,7 @@ void main()	{
 
     // Life
     life += 5. * GO;
-	if( life > 2050.  ) life =  0.;
+	if( life > lifeDuration  ) life =  0.;
 
     gl_FragColor = vec4( pos, life );
 }

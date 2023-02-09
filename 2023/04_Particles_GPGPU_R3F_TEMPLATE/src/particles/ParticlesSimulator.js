@@ -53,6 +53,7 @@ The size of the computation (sizeX * sizeY) is defined as 'resolution' automatic
  * 
  */
 
+
 export default class ParticlesSimulator {
   constructor(
     size,
@@ -60,7 +61,6 @@ export default class ParticlesSimulator {
     renderMaterial,
     positions,
     colors,
-    simSettings
   ) {
     this.material = renderMaterial;
 
@@ -134,15 +134,18 @@ export default class ParticlesSimulator {
 
 
     // Add Uniforms 
+    // VELOCITY
     this.velocityVariable.material.uniforms["restart"] = { value: 0 };
     this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
     this.velocityVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
-    this.velocityVariable.material.uniforms["floor"] = { value:   simSettings.floor };
-    
+    this.velocityVariable.material.uniforms["floor"] = { value: -2 };
+
+    // POSITION    
     this.positionVariable.material.uniforms["restart"] = { value: 0 };
     this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
     this.positionVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
-    this.positionVariable.material.uniforms["floor"] = { value:  simSettings.floor };
+    this.positionVariable.material.uniforms["floor"] = { value: -2 };
+    this.positionVariable.material.uniforms["lifeDuration"] = { value:  1000 };
 
     this.gpuCompute.init();
 
@@ -158,8 +161,7 @@ export default class ParticlesSimulator {
       this.positionVariable
     ).texture;
     
-    this.material.uniforms.texturePosition.value = posRT;
-    
+    this.material.uniforms.texturePosition.value = posRT;    
     this.gpuCompute.compute();
   }
 
