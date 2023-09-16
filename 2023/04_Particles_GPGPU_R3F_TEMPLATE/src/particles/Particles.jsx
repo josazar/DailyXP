@@ -21,7 +21,7 @@ const renderMaterial = new ShaderMaterial({
   transparent: true,
 });
 
-export default function Particles({ PLYUrl } : {PLYUrl: string}) {
+export default function Particles({ PLYUrl }) {
   const { gl } = useThree();
 
   const activeGeometry = useLoader(PLYLoader, PLYUrl)
@@ -88,8 +88,6 @@ export default function Particles({ PLYUrl } : {PLYUrl: string}) {
           <bufferAttribute attach="attributes-reference" count={geometryData.reference.length / 2} array={geometryData.reference} itemSize={2} />
         </bufferGeometry>
       </points>
-
-      {/*  Floor */}
     </Suspense>
   );
 };

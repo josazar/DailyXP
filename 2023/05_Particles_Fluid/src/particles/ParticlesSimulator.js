@@ -133,17 +133,23 @@ export default class ParticlesSimulator {
     ]);
 
 
+    // SPHERE COLIDER
+    const spherePos = new THREE.Vector3(0,-.25,0);
+    const sphereRadius =2.5;
+
+    const sphere = new Vector4(spherePos.x, spherePos.y, spherePos.z, sphereRadius);
+
     // Add Uniforms 
     // VELOCITY
     this.velocityVariable.material.uniforms["restart"] = { value: 0 };
     this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
-    this.velocityVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
+    this.velocityVariable.material.uniforms["spherePos"] = { value:   sphere };
     this.velocityVariable.material.uniforms["floor"] = { value: -2 };
 
     // POSITION    
     this.positionVariable.material.uniforms["restart"] = { value: 0 };
     this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
-    this.positionVariable.material.uniforms["spherePos"] = { value:   new Vector4(0,0,0,.25) };
+    this.positionVariable.material.uniforms["spherePos"] = { value:   sphere };
     this.positionVariable.material.uniforms["floor"] = { value: -2 };
     this.positionVariable.material.uniforms["lifeDuration"] = { value:  1000 };
 
@@ -172,7 +178,7 @@ export default class ParticlesSimulator {
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
       
       theArray[k + 0] = .035 * (Math.random() - .5);
-      theArray[k + 1] = -.01 + Math.random() * .045;     
+      theArray[k + 1] = -.01 + Math.random() * .1;     
       theArray[k + 2] = .035 * (Math.random() - .5);
 
       // Direction
