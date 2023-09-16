@@ -1,0 +1,36 @@
+{
+  "name": "lidar-gpgpu-velocity",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "@react-three/drei": "9.29.1",
+    "@react-three/fiber": "8.7.2",
+    "glsl-curl-noise": "0.0.4",
+    "glsl-noise": "0.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hot-toast": "2.3.0",
+    "react-scripts": "5.0.1",
+    "three": "0.144.0",
+    "three.fbo-helper": "1.1.1",
+    "zustand": "4.1.1"
+  },
+  "devDependencies": {
+    "@babel/runtime": "7.19.0",
+    "typescript": "4.8.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
