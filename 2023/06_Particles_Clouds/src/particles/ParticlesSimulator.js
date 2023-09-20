@@ -139,17 +139,18 @@ export default class ParticlesSimulator {
 
     // const sphere = new Vector4(spherePos.x, spherePos.y, spherePos.z, sphereRadius);
   // Create an array of sphere positions and radii
-    const n = 4; // Number of spheres
     const spherePositions = [];
+    spherePositions.push(new THREE.Vector4(2, .5, 0.5, 1.5));
+    spherePositions.push(new THREE.Vector4(-1, .5, 0, 1.9));
+
     
-
-    spherePositions.push(new THREE.Vector4(-1,.5,0, 1.9));
-
-    spherePositions.push(new THREE.Vector4(2,0,0, .95));
     
-    spherePositions.push(new THREE.Vector4(1,.1,1, .425));
+    
+    spherePositions.push(new THREE.Vector4(1, .1, 2, .4));
 
-    spherePositions.push(new THREE.Vector4(-1,-.2,1.5, .115));
+    spherePositions.push(new THREE.Vector4(.1, -.51, -2, .74));
+
+    spherePositions.push(new THREE.Vector4(-1, -.2, -1.5, 1.5));
 
 
 
@@ -158,13 +159,13 @@ export default class ParticlesSimulator {
     this.velocityVariable.material.uniforms["restart"] = { value: 0 };
     this.velocityVariable.material.uniforms["originalTexture"] = { value:   this.dtVelocity };
     this.velocityVariable.material.uniforms["spherePos"] = { value:   spherePositions };
-    this.velocityVariable.material.uniforms["floor"] = { value: -2 };
+    this.velocityVariable.material.uniforms["floorValue"] = { value: -2 };
 
     // POSITION    
     this.positionVariable.material.uniforms["restart"] = { value: 0 };
     this.positionVariable.material.uniforms["originalTexture"] = { value: this.dtPosition };
     this.positionVariable.material.uniforms["spherePos"] = { value:   spherePositions };
-    this.positionVariable.material.uniforms["floor"] = { value: -2 };
+    this.positionVariable.material.uniforms["floorValue"] = { value: -2 };
     this.positionVariable.material.uniforms["lifeDuration"] = { value:  1000 };
 
     this.gpuCompute.init();
@@ -191,8 +192,8 @@ export default class ParticlesSimulator {
 
     for (let k = 0, kl = theArray.length; k < kl; k += 4) {
       
-      theArray[k + 0] = .35 * (Math.random() - .5);
-      theArray[k + 1] = -.1 + Math.random() * .1;     
+      theArray[k + 0] = .75 * (Math.random() - .5)
+      theArray[k + 1] = -.1 + (Math.random() - .5) ;     
       theArray[k + 2] = .35 * (Math.random() - .25);
 
       // Direction

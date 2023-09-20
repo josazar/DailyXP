@@ -1,8 +1,8 @@
 export default /* glsl */ `
 #include <common>
+#define MAX_SPHERES 4
+uniform vec4 spherePos[MAX_SPHERES];
 
-uniform vec4 spherePos;
-uniform float restart;
 uniform sampler2D originalTexture;
 uniform float floor;
 // + (from add Variable threejs)
@@ -12,11 +12,11 @@ uniform float floor;
 
 // CONST
 vec3 ACC = vec3(.0, .0, .0);
-vec3 gravity = vec3(.0, -.2, .0);
-vec3 wind = vec3(-.75, .2, .5);
-float mass = 65.;
-float bounciness = .97;
-float friction = .8;
+vec3 gravity = vec3(.0, -.25, .0);
+vec3 wind = vec3(-.0, .0, .0);
+float mass = 85.;
+float bounciness = .95;
+float friction = .09;
 
 
 // Newton Law:
@@ -30,6 +30,8 @@ vec3 applyForce(vec3 force) {
   return ACC;
 }
 
+
+
 void main()	{
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec3 selfVelocity = texture2D( textureVelocity, uv ).xyz;
@@ -39,24 +41,27 @@ void main()	{
   float dirUpdate = texture2D( textureVelocity, uv ).w;
   
   vec3 velocity = selfVelocity;
-  float GO = restart;
 
 
 
   // EDGES SIMPLE FLOOR
   // ************************
-  if (selfPosition.y <= floor) {
-    dirUpdate = -dirUpdate * bounciness;
-    velocity.x *= bounciness * friction;
-    velocity.z *= bounciness * friction;
-    
-    
-  } 
+  // if (selfPosition.y <= floor) {
+  //   dirUpdate = -dirUpdate * bounciness;
+  //   velocity.x *= bounciness * friction;
+  //   velocity.z *= bounciness * friction;
+  // } 
+
+  // v2 without if statement
+  float belowFloor = step(selfPosition.y, floor);
+  dirUpdate = mix(dirUpdate, -dirUpdate * bounciness, belowFloor);
+  velocity.x *= mix(bounciness * friction, 1.0, belowFloor)    ;
+  velocity.z *= mix(bounciness * friction, 1.0, belowFloor);
+
+  // end test
+
 
   velocity.y *= dirUpdate;
-
-
-
 
   // Apply Forces
   // ****************
@@ -65,46 +70,44 @@ void main()	{
 
   // Collision
   // ********************************
-  float r = spherePos.a;
-  vec3 pp = spherePos.xyz - selfPosition.xyz;
-  float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
+  for (int i = 0; i < MAX_SPHERES; i++) { // Loop through all the spheres
 
-  if (d > r) {
-    GO = 1.;
-    ACC = applyForce(wind * pp.x * pp.z * .01);
+    float r = spherePos[i].a;
+    vec3 pp = spherePos[i].xyz - selfPosition.xyz;
+    float d = ( r * r ) / ( pp.x * pp.x + pp.y * pp.y + pp.z * pp.z ) ;
 
+    // test v2 without if statement
+    float aboveRadius = step(d, r);
+    ACC = mix(ACC, applyForce(wind), aboveRadius);
+    
     // Apply Friction
     // ****************
-    velocity.x *= friction;
-    velocity.z *= friction;
-
+    velocity.xy *= mix(friction, 1.0, aboveRadius);
+    
     // Apply Bounciness
     // ****************
-    velocity.y *= bounciness * friction * .25;
-  }
-  // End Collision
+    velocity.y *= mix(bounciness * friction, 1.0, aboveRadius);
+    
+    // End Collision
+    // **************  
+  } 
   
-
-  if (selfVelocity != original.xyz  ) {
-    GO = 1.;
-  }
-
   ACC = applyForce( gravity );
   
   // UDPATE
   // ***********************
-
-  ACC *= GO;
   velocity += ACC;
+  
 
   // LIFE
-  if (life == 0.) {
-   velocity = original.xyz * .8;
-   dirUpdate = 1.;
-  }
+  // if (life == 0.) 
+  vec3 newVelocity = mix(velocity, original.xyz * 0.8, step(life, 0.0));
+  dirUpdate = mix(dirUpdate, 1.0, step(life, 0.0));
+  velocity = newVelocity;
 
 
   gl_FragColor = vec4(velocity , dirUpdate);
+  
 }
 
 

@@ -18,7 +18,7 @@ const renderMaterial = new ShaderMaterial({
   uniforms: {
     texturePosition: { value: null },
     textureColor: { value: null },
-    uPointSize: { value: 20 * window.devicePixelRatio },
+    uPointSize: { value: 15 * window.devicePixelRatio },
   },
   transparent: true,
 });
@@ -28,7 +28,7 @@ export default function Particles() {
 
   const geometryData = useMemo(() => { 
     // Sphere
-      return getAttributesOfRandomShape(1200*K, 1.85)
+      return getAttributesOfRandomShape(2200*K, 2.85)
   }, [])
 
   // Simulator with GPGPU FBO
@@ -67,7 +67,7 @@ export default function Particles() {
   // LOOP
   // **************************************
 
-  const floorValue = -2.5;
+  const floorValue = -2;
   useFrame(({ clock }) => {
     if (simulator) {
       const a = clock.getElapsedTime();
@@ -75,8 +75,8 @@ export default function Particles() {
       simulator.update(a);
 
       // Update Floor
-      simulator.positionVariable.material.uniforms.floor.value = floorValue;
-      simulator.velocityVariable.material.uniforms.floor.value = floorValue;
+      simulator.positionVariable.material.uniforms.floorValue.value = floorValue;
+      simulator.velocityVariable.material.uniforms.floorValue.value = floorValue;
     }
   });
 

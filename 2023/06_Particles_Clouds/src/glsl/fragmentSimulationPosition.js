@@ -1,6 +1,6 @@
 export default /* glsl */ `
 #include <common>
-#define MAX_SPHERES 4
+#define MAX_SPHERES 5
 
 uniform float lifeDuration;
 uniform sampler2D originalTexture;
@@ -10,7 +10,7 @@ uniform vec4 spherePos[MAX_SPHERES];
 // uniform float amplitude;
 // uniform float maxDistance;
 
-uniform float floor;
+uniform float floorValue;
 
 
 void main()	{
@@ -46,36 +46,31 @@ void main()	{
         float d = (r * r) / (pp.x * pp.x + pp.y * pp.y + pp.z * pp.z);
         
         float isOutsideSphere = step(d, r);   
+        float isInsideSphere = 1.0 - isOutsideSphere;
         
         // Apply Friction
         // ****************
-        velocity.x *= mix(1.0, 0.99, isOutsideSphere);
-        velocity.z *= mix(1.0, 0.29, isOutsideSphere);
-        
-        // Apply Bounciness
-        // ****************
-        velocity.y *= mix(1.0, 0.19, isOutsideSphere);
-
+        velocity *= mix(1.0, 0.1, isOutsideSphere);
+        // velocity.z *= mix(1.0, 0.09, isOutsideSphere);    
+        // velocity.y *= mix(1.0, 0.09, isOutsideSphere);
         
         // UPDATE
         pos += velocity;
-
         // END COLLISION
     // **************
     }
 
 
     // EDGES  
-    if (pos.y <= floor) {
-        pos.y = floor ;
+    if (pos.y <= floorValue) {
+        pos.y = floorValue ;
     } 
 
     // Life
-    life += 3.5;
+    life += 4.5;
 	if( life > lifeDuration  ) life =  0.;
 
     gl_FragColor = vec4( pos, life );
-    
 
 }
 

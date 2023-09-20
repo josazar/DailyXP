@@ -12,8 +12,8 @@ function App() {
     <div className="App">
       <div id="canvas-container">
         <Canvas shadows legacy camera={
-          { position: [0, 10, 10], fov: 45, near: 0.1, far: 1000 }
-        }>          
+          { position: [0, 10, 10], fov: 45, near: 0.1, far: 1000 } }
+          >          
           <color attach="background" args={[0x8F7991]} />
           <Particles />
           <OrbitControls dampingFactor={0.8} />
